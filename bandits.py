@@ -93,9 +93,7 @@ def UCB1(dataset, num_episodes, batch_size, c=0.01):
         prev_loss = loss
         #Calc and rescale the reward, add to rewars history
         reward = bandit.calc_reward([start_loss, loss], gain='PG', prev_task_ind=i)
-        #reward = 0
         bandit.update_qfunc(reward, i)
-        bandit.print_qfunc()
         
     for t in range(num_episodes):
         #Take best action, observe reward, update qfunc
@@ -107,5 +105,4 @@ def UCB1(dataset, num_episodes, batch_size, c=0.01):
         reward = bandit.calc_reward([prev_loss, loss], gain='PG', prev_task_ind=action_t)
         bandit.update_qfunc(reward, action_t)
         prev_loss = loss
-        bandit.print_qfunc()
             
