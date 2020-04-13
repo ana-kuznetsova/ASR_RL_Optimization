@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#SBATCH -p dl
+#SBATCH --gres=gpu:p100:1
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=12
+#SBATCH --time=2-00:00:00
+#SBATCH -o automated_curr.out
+#SBATCH -e automated_curr_err_%j.err
+#SBATCH --mail-user=anakuzne@iu.edu
+#SBATCH --mail-type=ALL
+#SBATCH -J tt_batches
+
+
+source $HOME/tmp/deepspeech-transfer/bin/activate
+cd /N/u/anakuzne/Carbonate/curr_learning/DeepSpeech/
+./DeepSpeech.py --train_files='/N/slate/anakuzne/tatar/clips/batch.csv' --dev_files='/N/slate/anakuzne/tatar/clips/dev.csv' --alphabet_config_path='/N/slate/anakuzne/tatar/tt_alphabet.txt' --train_batch_size 64 --dev_batch_size 64 --dropout_rate 0.15 --lm_binary_path='/N/slate/anakuzne/tatar/tt_lm.binary' --lm_trie_path='/N/slate/anakuzne/tatar/tt_trie' --learning_rate 0.00001 --epochs 1 --export_dir='/N/slate/anakuzne/tt_automated_curr/' --checkpoint_dir='/N/slate/anakuzne/tt_ckpt_automated_curr/' --source_model_checkpoint_dir='/N/slate/anakuzne/deepspeech_released/ckpt_pretrained/' --drop_source_layers 2
+
+python evaluate.py --test_files='/N/slate/anakuzne/tatar/clips/test.csv' --test_batch_size 32 --checkpoint_dir='/N/slate/anakuzne/tt_ckpt_automated_curr/' --load='best' --test_output_file='/N/u/anakuzne/Carbonate/curr_learning/automated_curr.json' --report_count 4700

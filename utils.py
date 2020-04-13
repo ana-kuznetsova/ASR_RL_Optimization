@@ -12,4 +12,3 @@ def save_batch(current_batch, df, path):
     df = train[train['wav_filename'].isin(s)]
 
     df.to_csv(path)
-    
