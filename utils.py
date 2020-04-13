@@ -16,17 +16,24 @@ def save_batch(current_batch, df, path='/N/slate/anakuzne/tatar/clips/batch.csv'
     df.to_csv(path)
 
 
-def train(gain_type='PG'):
+def train_PG():
+
+    os. system('cd /N/u/anakuzne/Carbonate/curr_learning/ASR_RL_Optimization/')
+    os.system('sbatch tt_train_pg.script')
+    
+
+def train_SPG(sample_it=0):
 
     os. system('cd /N/u/anakuzne/Carbonate/curr_learning/ASR_RL_Optimization/')
 
-    if gain_type=='PG':
-        os.system('sbatch tt_train_pg.script')
-    elif gain_type=='SPG':
+    if sample_it==0:
         os.system('sbatch tt_train_spg1.script')
+    elif sample_it==1:
+        os.system('sbatch tt_train_spg1.script')   
 
 
-
+def load_losses():
+    
     with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_before.json') as f:
         loss_before = json.load(f)
     
@@ -37,4 +44,3 @@ def train(gain_type='PG'):
     L2 = sum([l['loss'] for l in loss_after])/len(loss_before)
 
     return [L1, L2]
-    

@@ -74,15 +74,16 @@ def UCB1(dataset, csv, num_episodes, batch_size, batch_path, c=0.01, gain_type='
     
     ##### Initialization ######
     #Play each of the arms once, observe the reward
-    
-    for i in range(len(bandit.tasks)):
+         
+    if gain_type=='PG':          
+        
+        for i in range(len(bandit.tasks)):
             batch = bandit.sample_task(i, same=True)
             save_batch(batch, csv)
-            losses = train()
+            train_PG()
+            losses = load_losses()
             reward = bandit.calc_reward(losses)
             bandit.update_qfunc(reward, i)
-     
-    if gain_type=='PG':          
         
         for t in range(num_episodes):
             #Take best action, observe reward, update qfunc
@@ -91,7 +92,8 @@ def UCB1(dataset, csv, num_episodes, batch_size, batch_path, c=0.01, gain_type='
             print('-----------------------------------------------')
             batch = bandit.sample_task(action_t)
             save_batch(batch, csv)
-            losses = train(gain_type='PG')
+            train_PG()
+            losses = load_losses()
             reward = bandit.calc_reward(losses)
             bandit.update_qfunc(reward, action_t)
             
@@ -104,6 +106,10 @@ def UCB1(dataset, csv, num_episodes, batch_size, batch_path, c=0.01, gain_type='
             print('-----------------------------------------------')
             batch = bandit.sample_task(action_t)
             save_batch(batch, csv)
-            losses = train(gain_type='SPG')
+            train_SPG(sample_it=0)
+            batch = bandit.sample_task(action_t)
+            save_batch(batch, csv)
+            train_SPG(sample_it=0)
+            losses = load_losses()            
             reward = bandit.calc_reward(losses)
             bandit.update_qfunc(reward, action_t)       
