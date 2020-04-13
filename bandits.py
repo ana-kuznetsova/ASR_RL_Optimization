@@ -32,17 +32,8 @@ class Bandit:
     def erase_rhist(self):
         self.reward_hist = []
         
-    def calc_reward(self, losses, gain='PG', prev_task_ind=None):
-        
-        if gain=='PG':
-            L = losses[0]- losses[1]
-            
-        elif gain=='SPG':
-            same_task_batch = self.sample_task(prev_task_ind, same=True)
-            #Call training function here
-            L0 = losses[0]
-            L1 = train()
-            L = L0-L1
+    def calc_reward(self, losses):
+        L = losses[0]- losses[1]
             
         self.reward_hist.append(L)
         
@@ -60,49 +51,59 @@ class Bandit:
             else:
                 return (2*(L-q_lo))/((q_hi-q_lo)-1)
         
-    def sample_task(self, prev_task_ind, same=False):
-        if same:
-            batch = np.random.choice(self.tasks[prev_task_ind], self.batch_size, replace=False)    
-            return batch
-        else:
-            task_ind = np.random.choice(self.num_tasks, 1)[0]
-            batch = np.random.choice(self.tasks[task_ind], self.batch_size, replace=False) 
-            return batch
+    def sample_task(self, task_ind):
+        batch = np.random.choice(self.tasks[task_ind], self.batch_size, replace=False) 
+        return batch
 
 
-
-def UCB1(dataset, num_episodes, batch_size, c=0.01):
+def UCB1(dataset, csv, num_episodes, batch_size, batch_path, c=0.01, gain_type='SPG'):
     '''
     Params:
         dataset (object): of class DataSet
+        csv (df): original training csv for DeepSpeech
         num_episodes (int): number of episodes to play
         batch_size (int): size of the training batch
+        batch_path (str):path to save training batch for DeepSpeech
+        c (float): exploration rate
+        gain_type (str): progress gain
     '''
+    
     #Initialize bandit, save past actions, save past rewards
     bandit = Bandit(dataset.tasks, batch_size)
     
-    #Initialization
+    
+    ##### Initialization ######
     #Play each of the arms once, observe the reward
-    start_loss = np.random.choice(500, 1)[0]
-    prev_loss = 0
     
     for i in range(len(bandit.tasks)):
-        #train on the task with index i
-        batch = bandit.sample_task(i, same=True)
-        loss = train(batch)
-        prev_loss = loss
-        #Calc and rescale the reward, add to rewars history
-        reward = bandit.calc_reward([start_loss, loss], gain='PG', prev_task_ind=i)
-        bandit.update_qfunc(reward, i)
+            batch = bandit.sample_task(i, same=True)
+            save_batch(batch, csv)
+            losses = train()
+            reward = bandit.calc_reward(losses)
+            bandit.update_qfunc(reward, i)
+     
+    if gain_type=='PG':          
         
-    for t in range(num_episodes):
-        #Take best action, observe reward, update qfunc
-        action_t = bandit.take_best_action(t, c)         
-        print(f"Playing action {action_t} on time step {t}...")
-        print('-----------------------------------------------')
-        batch = bandit.sample_task(action_t, same=True)
-        loss = train(batch)
-        reward = bandit.calc_reward([prev_loss, loss], gain='PG', prev_task_ind=action_t)
-        bandit.update_qfunc(reward, action_t)
-        prev_loss = loss
+        for t in range(num_episodes):
+            #Take best action, observe reward, update qfunc
+            action_t = bandit.take_best_action(t, c)         
+            print(f"Playing action {action_t} on time step {t}...")
+            print('-----------------------------------------------')
+            batch = bandit.sample_task(action_t)
+            save_batch(batch, csv)
+            losses = train(gain_type='PG')
+            reward = bandit.calc_reward(losses)
+            bandit.update_qfunc(reward, action_t)
             
+    elif gain_type=='SPG':
+        
+        for t in range(num_episodes):
+            #Take best action, observe reward, update qfunc
+            action_t = bandit.take_best_action(t, c)         
+            print(f"Playing action {action_t} on time step {t}...")
+            print('-----------------------------------------------')
+            batch = bandit.sample_task(action_t)
+            save_batch(batch, csv)
+            losses = train(gain_type='SPG')
+            reward = bandit.calc_reward(losses)
+            bandit.update_qfunc(reward, action_t)       
