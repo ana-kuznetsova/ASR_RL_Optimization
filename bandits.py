@@ -1,3 +1,7 @@
+from data import DataSet
+import numpy as np
+from utils import read_command, save_batch, train_PG, train_SPG, load_losses
+
 class Bandit:
     def __init__(self, tasks, batch_size):
         self.actions = np.arange(len(tasks))
@@ -84,8 +88,6 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, batch_path, c=0.
 
             for i in range(len(bandit.tasks)):
                 batch = bandit.sample_task(i, same=True)
-                save_batch(batch, csv)
-                train_PG()
                 #Generate two random numbers to initialize loss
                 losses = np.random.randint(500, size=2)
                 reward = bandit.calc_reward(losses)

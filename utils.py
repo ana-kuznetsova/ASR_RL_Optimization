@@ -2,6 +2,10 @@ import pandas as pd
 import os
 import json
 
+def read_command(path):
+    with open(path, 'r') as fo:
+        return fo.read()
+
 def save_batch(current_batch, df, path='/N/slate/anakuzne/tatar/clips/batch.csv'):
     '''
     Saves current batch to train in DeepSpeech
@@ -17,9 +21,8 @@ def save_batch(current_batch, df, path='/N/slate/anakuzne/tatar/clips/batch.csv'
 
 
 def train_PG():
-
-    os. system('cd /N/u/anakuzne/Carbonate/curr_learning/ASR_RL_Optimization/')
-    os.system('sbatch tt_train_pg.script')
+    command = read_command('sbatch tt_train_pg.script')
+    os.system(command)
     
 
 def train_SPG(sample_it=0):
