@@ -96,7 +96,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, batch_path, c=0.
                 losses = np.random.randint(500, size=2)
                 print('Init losses:', losses)
                 reward = bandit.calc_reward(losses)
-                bandit.update_qfunc(reward, i)
+                bandit.update_qfunc(reward, i-1)
             
             for t in range(1, num_timesteps+1):
                 #Take best action, observe reward, update qfunc
