@@ -99,7 +99,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, batch_path, c=0.
                 action_t = bandit.take_best_action(t, c)         
                 print(f"Playing action {action_t} on time step {t}...")
                 batch = bandit.sample_task(action_t)
-                save_batch(batch, csv)
+                save_batch(batch)
                 train_PG()
                 losses = load_losses()
                 print('Losses:', losses)
