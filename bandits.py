@@ -91,7 +91,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, batch_path, c=0.
             print('-----------------------------------------------')
 
             for i in range(1, len(bandit.tasks)+1):
-                batch = bandit.sample_task(i, same=True)
+                batch = bandit.sample_task(i)
                 #Generate two random numbers to initialize loss
                 losses = np.random.randint(500, size=2)
                 print('Init losses:', losses)
