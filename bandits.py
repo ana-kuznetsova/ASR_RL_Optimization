@@ -90,6 +90,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, batch_path, c=0.
                 batch = bandit.sample_task(i, same=True)
                 #Generate two random numbers to initialize loss
                 losses = np.random.randint(500, size=2)
+                print('Init losses:', losses)
                 reward = bandit.calc_reward(losses)
                 bandit.update_qfunc(reward, i)
             
@@ -101,6 +102,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, batch_path, c=0.
                 save_batch(batch, csv)
                 train_PG()
                 losses = load_losses()
+                print('Losses:', losses)
                 reward = bandit.calc_reward(losses)
                 bandit.update_qfunc(reward, action_t)
             
