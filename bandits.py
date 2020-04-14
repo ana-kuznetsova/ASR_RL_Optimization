@@ -55,7 +55,6 @@ class Bandit:
         batch = np.random.choice(self.tasks[task_ind], self.batch_size, replace=False) 
         return batch
 
-
 def UCB1(dataset, csv, num_episodes, batch_size, batch_path, c=0.01, gain_type='SPG'):
     '''
     Params:
@@ -112,4 +111,4 @@ def UCB1(dataset, csv, num_episodes, batch_size, batch_path, c=0.01, gain_type='
             train_SPG(sample_it=0)
             losses = load_losses()            
             reward = bandit.calc_reward(losses)
-            bandit.update_qfunc(reward, action_t)       
+            bandit.update_qfunc(reward, action_t)        
