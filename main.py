@@ -31,7 +31,7 @@ def main(args):
     data = DataSet(df, args.num_tasks)
     data.create_tasks()
 
-    num_timesteps = np.ceil(len(df)/args.batch_size)
+    num_timesteps = int(np.ceil(len(df)/args.batch_size))
 
     UCB1(data, args.num_episodes, num_timesteps, args.batch_size, args.c, args.gain_type)
 
