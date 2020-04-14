@@ -22,8 +22,10 @@ def save_batch(current_batch):
 
 
 def train_PG():
-    command = read_command('tt_train_pg.script')
-    os.system(command)
+    #command = read_command('tt_train_pg.script')
+    os.system('bash tt_train_pg.sh')
+    #os.system('source $HOME/tmp/deepspeech-transfer/bin/activate')
+    #os.system('python /N/u/anakuzne/Carbonate/curr_learning\/DeepSpeech\/evaluate.py --test_files=\'\/N\/slate\/anakuzne\/tatar\/clips\/test.csv\' --test_batch_size 32 --checkpoint_dir=\'\/N\/slate\/anakuzne\/tt_ckpt_automated_curr\/\' --load=\'best\' --test_output_file=\'\/N\/u\/anakuzne\/Carbonate\/curr_learning\/automated_curr\/loss_before.json\' --report_count 4700')
     
 
 '''
