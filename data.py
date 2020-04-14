@@ -1,3 +1,5 @@
+import numpy as np
+
 class DataSet:
     def __init__(self, data, num_tasks):
         self.data = data
@@ -8,7 +10,7 @@ class DataSet:
     def create_tasks(self):
         
         def index_marks(nrows, chunk_size):
-            return range(chunk_size, math.ceil(nrows / chunk_size)*chunk_size, chunk_size)
+            return range(chunk_size, np.ceil(nrows / chunk_size)*chunk_size, chunk_size)
         
         def split(dfm, chunk_size):
             indices = index_marks(dfm.shape[0], chunk_size)
