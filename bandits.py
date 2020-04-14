@@ -1,6 +1,6 @@
 from data import DataSet
 import numpy as np
-from utils import read_command, save_batch, train_PG, train_SPG, load_losses
+from utils import read_command, save_batch, train_PG, load_losses
 
 class Bandit:
     def __init__(self, tasks, batch_size):
@@ -105,7 +105,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, batch_path, c=0.
                 print('Losses:', losses)
                 reward = bandit.calc_reward(losses)
                 bandit.update_qfunc(reward, action_t)
-            
+    ''' 
     elif gain_type=='SPG':
         
         for t in range(num_episodes):
@@ -121,4 +121,5 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, batch_path, c=0.
             train_SPG(sample_it=0)
             losses = load_losses()            
             reward = bandit.calc_reward(losses)
-            bandit.update_qfunc(reward, action_t)        
+            bandit.update_qfunc(reward, action_t)  
+    '''      
