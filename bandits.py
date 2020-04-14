@@ -55,12 +55,13 @@ class Bandit:
         batch = np.random.choice(self.tasks[task_ind], self.batch_size, replace=False) 
         return batch
 
-def UCB1(dataset, csv, num_episodes, batch_size, batch_path, c=0.01, gain_type='SPG'):
+def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, batch_path, c=0.01, gain_type='SPG'):
     '''
     Params:
         dataset (object): of class DataSet
         csv (df): original training csv for DeepSpeech
         num_episodes (int): number of episodes to play
+        num_timesteps (int): number of time steps per episode 
         batch_size (int): size of the training batch
         batch_path (str):path to save training batch for DeepSpeech
         c (float): exploration rate
@@ -74,28 +75,32 @@ def UCB1(dataset, csv, num_episodes, batch_size, batch_path, c=0.01, gain_type='
     ##### Initialization ######
     #Play each of the arms once, observe the reward
          
-    if gain_type=='PG':          
-        
-        for i in range(len(bandit.tasks)):
-            batch = bandit.sample_task(i, same=True)
-            save_batch(batch, csv)
-            train_PG()
-            #Generate two random numbers to initialize loss
-            losses = np.random.randint(500, size=2)
-            reward = bandit.calc_reward(losses)
-            bandit.update_qfunc(reward, i)
-        
-        for t in range(num_episodes):
-            #Take best action, observe reward, update qfunc
-            action_t = bandit.take_best_action(t, c)         
-            print(f"Playing action {action_t} on time step {t}...")
+    if gain_type=='PG':
+        for ep in range(num_episodes):
+            
             print('-----------------------------------------------')
-            batch = bandit.sample_task(action_t)
-            save_batch(batch, csv)
-            train_PG()
-            losses = load_losses()
-            reward = bandit.calc_reward(losses)
-            bandit.update_qfunc(reward, action_t)
+            print(f"Starting episode {ep} ...")
+            print('-----------------------------------------------')
+
+            for i in range(len(bandit.tasks)):
+                batch = bandit.sample_task(i, same=True)
+                save_batch(batch, csv)
+                train_PG()
+                #Generate two random numbers to initialize loss
+                losses = np.random.randint(500, size=2)
+                reward = bandit.calc_reward(losses)
+                bandit.update_qfunc(reward, i)
+            
+            for t in range(num_timesteps):
+                #Take best action, observe reward, update qfunc
+                action_t = bandit.take_best_action(t, c)         
+                print(f"Playing action {action_t} on time step {t}...")
+                batch = bandit.sample_task(action_t)
+                save_batch(batch, csv)
+                train_PG()
+                losses = load_losses()
+                reward = bandit.calc_reward(losses)
+                bandit.update_qfunc(reward, action_t)
             
     elif gain_type=='SPG':
         
