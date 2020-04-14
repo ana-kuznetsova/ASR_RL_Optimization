@@ -6,7 +6,7 @@ def read_command(path):
     with open(path, 'r') as fo:
         return fo.read()
 
-def save_batch(current_batch, df, path='/N/slate/anakuzne/tatar/clips/batch.csv'):
+def save_batch(current_batch, path='/N/slate/anakuzne/tatar/clips/batch.csv'):
     '''
     Saves current batch to train in DeepSpeech
     Params:
@@ -14,6 +14,7 @@ def save_batch(current_batch, df, path='/N/slate/anakuzne/tatar/clips/batch.csv'
         df (data set): original training csv
         path (str): path to save df
     '''
+    df = pd.read_csv('train.csv')
     s = [v.replace('.mp3', '.wav') for v in current_batch]
     df = df[df['wav_filename'].isin(s)]
 
@@ -21,7 +22,7 @@ def save_batch(current_batch, df, path='/N/slate/anakuzne/tatar/clips/batch.csv'
 
 
 def train_PG():
-    command = read_command('sbatch tt_train_pg.script')
+    command = read_command('tt_train_pg.script')
     os.system(command)
     
 
