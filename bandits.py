@@ -80,7 +80,8 @@ def UCB1(dataset, csv, num_episodes, batch_size, batch_path, c=0.01, gain_type='
             batch = bandit.sample_task(i, same=True)
             save_batch(batch, csv)
             train_PG()
-            losses = load_losses()
+            #Generate two random numbers to initialize loss
+            losses = np.random.randint(500, size=2)
             reward = bandit.calc_reward(losses)
             bandit.update_qfunc(reward, i)
         
