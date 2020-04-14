@@ -79,7 +79,8 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, batch_path, c=0.
     
     ##### Initialization ######
     #Play each of the arms once, observe the reward
-         
+    print('Gain:', gain_type)
+
     if gain_type=='PG':
 
         print('Start training...')
