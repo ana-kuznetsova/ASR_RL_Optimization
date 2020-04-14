@@ -26,14 +26,16 @@ def train_PG():
     os.system(command)
     
 
+'''
 def train_SPG(sample_it=0):
 
     os. system('cd /N/u/anakuzne/Carbonate/curr_learning/ASR_RL_Optimization/')
 
     if sample_it==0:
-        os.system('sbatch tt_train_spg1.script')
+        os.system('tt_train_spg1.script')
     elif sample_it==1:
-        os.system('sbatch tt_train_spg1.script')   
+        os.system('tt_train_spg1.script')   
+'''
 
 
 def load_losses():
