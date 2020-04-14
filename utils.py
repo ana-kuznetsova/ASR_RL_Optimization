@@ -15,7 +15,7 @@ def save_batch(current_batch, df, path='/N/slate/anakuzne/tatar/clips/batch.csv'
         path (str): path to save df
     '''
     s = [v.replace('.mp3', '.wav') for v in current_batch]
-    df = train[train['wav_filename'].isin(s)]
+    df = df[df['wav_filename'].isin(s)]
 
     df.to_csv(path)
 
