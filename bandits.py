@@ -74,12 +74,15 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, batch_path, c=0.
     
     #Initialize bandit, save past actions, save past rewards
     bandit = Bandit(dataset.tasks, batch_size)
+    print('Created bandit...')
     
     
     ##### Initialization ######
     #Play each of the arms once, observe the reward
          
     if gain_type=='PG':
+
+        print('Start training...')
         for ep in range(1, num_episodes+1):
             
             print('-----------------------------------------------')
