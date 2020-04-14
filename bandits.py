@@ -59,7 +59,7 @@ class Bandit:
         batch = np.random.choice(self.tasks[task_ind], self.batch_size, replace=False) 
         return batch
 
-def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, batch_path, c=0.01, gain_type='SPG'):
+def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, batch_path, c=0.01, gain_type='PG'):
     '''
     Params:
         dataset (object): of class DataSet
