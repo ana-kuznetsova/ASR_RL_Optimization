@@ -53,7 +53,7 @@ class Bandit:
     def calc_reward(self, losses):
         L = losses[0]- losses[1]
         last_loss = 0
-        if len(self.reqards_hist) > 0:
+        if len(self.reward_hist) > 0:
             last_loss = self.reqards_hist[-1]   
         self.reward_hist.append(L+last_loss)
         
@@ -146,7 +146,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                 print('Current Q-function')
                 bandit.print_qfunc()
                 print('-----------------------------------------------')
-                
+
             bandit.initialise_tasks()
     ''' 
     elif gain_type=='SPG':
