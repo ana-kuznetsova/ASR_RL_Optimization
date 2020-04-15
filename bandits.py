@@ -113,6 +113,8 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
 
     if gain_type=='PG':
         for ep in range(1, num_episodes+1):
+
+            bandit.initialise_tasks()
             
             print('-----------------------------------------------')
             print(f"Starting episode {ep} ...")
@@ -147,7 +149,6 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                 bandit.print_qfunc()
                 print('-----------------------------------------------')
 
-            bandit.initialise_tasks()
     ''' 
     elif gain_type=='SPG':
         
