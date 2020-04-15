@@ -6,13 +6,15 @@ from utils import read_command, save_batch, train_PG, load_losses
 class Bandit:
     def __init__(self, tasks, batch_size):
         self.actions = np.arange(len(tasks))
+        self.stored_tasks = tasks
         self.tasks = tasks
         self.num_tasks = len(tasks)
         self._qfunc = {a:{"a":0, "r":0, "val":0} for a in range(len(tasks))}
         self.policy = {}
         self.reward_hist = [] #history of unscaled rewards
         self.batch_size = batch_size
-        self.empty_tasks = [False for i in self.tasks]
+        self.empty_tasks = [False for task in self.tasks]
+    
 
     def save_rhist(self, rhist_path):
         f = open(rhist_path, 'wb')
@@ -39,6 +41,8 @@ class Bandit:
 
         while(self.empty_tasks[best]):
             action_vals.pop(best)
+            if len(action_vals) == 0:
+                return -1
             best = np.argmax(action_vals)
         return best
 
@@ -48,8 +52,10 @@ class Bandit:
         
     def calc_reward(self, losses):
         L = losses[0]- losses[1]
-            
-        self.reward_hist.append(L)
+        last_loss = 0
+        if len(self.reqards_hist) > 0:
+            last_loss = self.reqards_hist[-1]   
+        self.reward_hist.append(L+last_loss)
         
         ##Scale reward
         q_lo = np.ceil(np.quantile(self.reward_hist, 0.2))
@@ -66,19 +72,23 @@ class Bandit:
                 return (2*(L-q_lo))/((q_hi-q_lo)-1)
         
     def sample_task(self, task_ind):
-        if len(self.tasks[task_ind]) == 0:
-            return self.tasks[task_ind]
+        if len(self.stored_tasks[task_ind]) == 0:
+            return self.stored_tasks[task_ind]
 
         if len(self.tasks[task_ind]) < self.batch_size:
-            batch = self.tasks[task_ind]
-            self.tasks[task_ind] = np.array([])
+            batch = self.stored_tasks[task_ind]
+            self.stored_tasks[task_ind] = np.array([])
             self.empty_tasks[task_ind] = True
             return batch
 
         if len(self.tasks[task_ind]) >= self.batch_size:
-            batch = np.random.choice(self.tasks[task_ind], self.batch_size)
-            self.tasks[task_ind] = np.array([row for row in self.tasks[task_ind] if row not in batch])
+            batch = np.random.choice(self.stored_tasks[task_ind], self.batch_size)
+            self.stored_tasks[task_ind] = np.array([row for row in self.stored_tasks[task_ind] if row not in batch])
             return batch
+
+    def initialise_tasks(self):
+        self.stored_tasks = self.tasks
+        self.empty_tasks = [False for task in self.tasks]
 
 def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_type='PG'):
     '''
@@ -107,7 +117,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
             print('-----------------------------------------------')
             print(f"Starting episode {ep} ...")
             print('-----------------------------------------------')
-
+            
             for i in range(len(bandit.tasks)):
                 batch = bandit.sample_task(i)
                 #Generate two random numbers to initialize loss
@@ -121,6 +131,8 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                 action_t = bandit.take_best_action(t, c)         
                 print(f"Playing action {action_t} on time step {t}...")
                 batch = bandit.sample_task(action_t)
+                if batch < 0:
+                    break
                 save_batch(batch)
                 if t < num_timesteps:
                     train_PG(taskID = action_t+1)
@@ -134,6 +146,8 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                 print('Current Q-function')
                 bandit.print_qfunc()
                 print('-----------------------------------------------')
+                
+            bandit.initialise_tasks()
     ''' 
     elif gain_type=='SPG':
         
