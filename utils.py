@@ -53,3 +53,7 @@ def load_losses():
     L2 = sum([l['loss'] for l in loss_after])/len(loss_before)
 
     return [L1, L2]
+
+
+def clean_ckpt_dirs():
+    os.system('rm -r /N/slate/anakuzne/tt_ckpt_automated_curr/')
