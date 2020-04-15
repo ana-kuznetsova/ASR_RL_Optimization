@@ -74,7 +74,7 @@ class Bandit:
 
         if len(self.tasks[task_ind]) >= self.batch_size:
             batch = np.random.choice(self.tasks[task_ind], self.batch_size)
-            self.tasks[task_ind] = np.array([row in self.tasks[task_ind] if row not in batch])
+            self.tasks[task_ind] = np.array([row for row in self.tasks[task_ind] if row not in batch])
             return batch
 
 def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, batch_path, c=0.01, gain_type='PG'):
