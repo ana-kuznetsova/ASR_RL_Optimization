@@ -35,6 +35,7 @@ def main(args):
     num_timesteps = int(np.ceil(len(df)/args.batch_size))
 
     print('Starting UCB1...')
+    print(args.batch_size, args.gain_type)
     UCB1(data, args.num_episodes, num_timesteps, args.batch_size, args.c, args.gain_type)
 
 

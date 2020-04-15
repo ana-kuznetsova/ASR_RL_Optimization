@@ -92,7 +92,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, batch_path, c=0.
     '''
     
     #Initialize bandit, save past actions, save past rewards
-    bandit = Bandit(dataset.tasks, batch_size)
+    bandit = Bandit(tasks = dataset.tasks, batch_size = batch_size)
     print('Created bandit...')
     
     
