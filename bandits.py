@@ -21,6 +21,9 @@ class Bandit:
         f = open(rhist_path, 'wb')
         pickle.dump(self.reward_hist, f)
 
+    def save_lhist(self, lhist_path):
+        f = open(lhist_path, 'wb')
+        pickle.dump(self.loss_hist, f)
     
     def update_qfunc(self, reward, action):
         self._qfunc[action]["a"]+=1
@@ -153,6 +156,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                 reward = bandit.calc_reward(losses)
                 bandit.update_qfunc(reward, action_t)
                 bandit.save_rhist('reward_hist.pickle')
+                bandit.save_lhist('loss_hist.pickle')
                 print('-----------------------------------------------')
                 print('Current Q-function')
                 bandit.print_qfunc()
