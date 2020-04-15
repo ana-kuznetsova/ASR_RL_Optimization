@@ -16,7 +16,7 @@ class Bandit:
 
     def save_rhist(self, rhist_path):
         f = open(rhist_path, 'wb')
-        pickle.dump(f, self.reward_hist)
+        pickle.dump(self.reward_hist, f)
 
     
     def update_qfunc(self, reward, action):
@@ -35,8 +35,6 @@ class Bandit:
         for action in self._qfunc:
             q = self._qfunc[action]['val'] + c*np.sqrt((np.log(time_step)/self._qfunc[action]["a"]))
             action_vals.append(q)
-        print('Action vals:', action_vals)
-
         best = np.argmax(action_vals)
 
         while(self.empty_tasks[best]):
