@@ -23,9 +23,9 @@ def save_batch(current_batch):
 
 def train_PG(taskID, init = False):
     if init:
-        os.system('bash tt_init_'+taskID+'.sh')
+        os.system('bash tt_init_'+str(taskID)+'.sh')
     else:
-        os.system('bash tt_train_pg'+taskID+'.sh')
+        os.system('bash tt_train_pg'+str(taskID)+'.sh')
 
 '''
 def train_SPG(sample_it=0):
