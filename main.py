@@ -49,5 +49,4 @@ if __name__ == '__main__':
     parser.add_argument('--gain_type', type=str, help='Gain type (Prediction Gain, Self-Prediction Gain)')
 
     args = parser.parse_args()
-    print(args)
     main(args)
