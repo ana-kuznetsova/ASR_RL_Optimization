@@ -54,7 +54,7 @@ class Bandit:
         L = losses[0]- losses[1]
         last_loss = 0
         if len(self.reward_hist) > 0:
-            last_loss = self.reqards_hist[-1]   
+            last_loss = self.reward_hist[-1]   
         self.reward_hist.append(L+last_loss)
         
         ##Scale reward
