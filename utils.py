@@ -21,9 +21,11 @@ def save_batch(current_batch):
     df.to_csv('/N/slate/anakuzne/tatar/clips/batch.csv')
 
 
-def train_PG(taskID, init = False):
+def train_PG(taskID, init = False, end = False):
     if init:
         os.system('bash tt_init_'+str(taskID)+'.sh')
+    elif end:
+        os.system('bash tt_end_'+str(taskID)+'.sh')
     else:
         os.system('bash tt_train_pg'+str(taskID)+'.sh')
 
