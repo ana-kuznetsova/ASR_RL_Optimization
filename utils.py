@@ -26,7 +26,8 @@ def train_PG(taskID, init = False, end = False):
         os.system('bash tt_init_'+str(taskID)+'.sh')
     if end:
         os.system('bash tt_end_'+str(taskID)+'.sh')
-    if not end and not init:
+    if not end and not init:    
+        print('Running middle script..')
         os.system('bash tt_train_pg'+str(taskID)+'.sh')
 
 '''
