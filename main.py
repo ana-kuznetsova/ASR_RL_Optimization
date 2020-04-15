@@ -36,7 +36,7 @@ def main(args):
 
     print('Starting UCB1...')
     
-    UCB1(data, df, args.num_episodes, num_timesteps, args.batch_size, args.c, args.gain_type):
+    UCB1(data, df, args.num_episodes, num_timesteps, args.batch_size, args.c, args.gain_type)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Process some integers.')
