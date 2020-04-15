@@ -29,6 +29,7 @@ def main(args):
 
     #Clean up checkpoint dirs
 
+
     clean_ckpt_dirs()
 
     df = pd.read_csv(args.df_path)

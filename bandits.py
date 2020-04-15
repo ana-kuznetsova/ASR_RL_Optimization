@@ -121,12 +121,12 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
     #Play each of the arms once, observe the reward
 
     for i in range(len(bandit.tasks)):
-                batch = bandit.sample_task(i)
-                #Generate two random numbers to initialize loss
-                losses = np.random.randint(500, size=2)
-                reward = bandit.calc_reward(losses)
-                bandit.update_qfunc(reward, i)
-                train_PG(init = True, taskID = i+1)
+        batch = bandit.sample_task(i)
+        #Generate two random numbers to initialize loss
+        losses = np.random.randint(500, size=2)
+        reward = bandit.calc_reward(losses)
+        bandit.update_qfunc(reward, i)
+        train_PG(init = True, taskID = i+1)
  
 
     if gain_type=='PG':
