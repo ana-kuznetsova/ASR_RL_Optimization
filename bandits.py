@@ -66,7 +66,7 @@ class Bandit:
         if len(self.tasks[task_ind]) == 0:
             return self.tasks[task_ind]
 
-        if len(self.tasks[task_ind]) < batch_size:
+        if len(self.tasks[task_ind]) < self.batch_size:
             batch = self.tasks[task_ind]
             self.tasks[task_ind] = np.array([])
             self.empty_tasks[task_ind] = True
