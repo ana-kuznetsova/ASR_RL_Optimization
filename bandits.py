@@ -11,6 +11,7 @@ class Bandit:
         self.policy = {}
         self.reward_hist = [] #history of unscaled rewards
         self.batch_size = batch_size
+        self.empty_tasks = [False for i in self.tasks]
         
     
     def update_qfunc(self, reward, action):
@@ -30,8 +31,14 @@ class Bandit:
             q = self._qfunc[action]['val'] + c*np.sqrt((np.log(time_step)/self._qfunc[action]["a"]))
             action_vals.append(q)
         print('Action vals:', action_vals)
-        return np.argmax(action_vals)
-        
+
+        best = np.argmax(action_vals)
+
+        while(self.empty_tasks[best]):
+            action_vals.pop(best)
+            best = np.argmax(action_vals)
+        return best
+
         
     def erase_rhist(self):
         self.reward_hist = []
@@ -56,8 +63,19 @@ class Bandit:
                 return (2*(L-q_lo))/((q_hi-q_lo)-1)
         
     def sample_task(self, task_ind):
-        batch = np.random.choice(self.tasks[task_ind], self.batch_size, replace=False) 
-        return batch
+        if len(self.tasks[task_ind]) == 0:
+            return self.tasks[task_ind]
+
+        if len(self.tasks[task_ind]) < batch_size:
+            batch = self.tasks[task_ind]
+            self.tasks[task_ind] = np.array([])
+            self.empty_tasks[task_ind] = True
+            return batch
+
+        if len(self.tasks[task_ind]) >= self.batch_size:
+            batch = np.random.choice(self.tasks[task_ind], self.batch_size)
+            self.tasks[task_ind] = np.array([row in self.tasks[task_ind] if row not in batch])
+            return batch
 
 def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, batch_path, c=0.01, gain_type='PG'):
     '''
@@ -97,6 +115,8 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, batch_path, c=0.
                 print('Init losses:', losses)
                 reward = bandit.calc_reward(losses)
                 bandit.update_qfunc(reward, i)
+                print("initialising model...")
+                train_PG(init = True, taskID = i)
             
             for t in range(1, num_timesteps+1):
                 #Take best action, observe reward, update qfunc
@@ -104,7 +124,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, batch_path, c=0.
                 print(f"Playing action {action_t} on time step {t}...")
                 batch = bandit.sample_task(action_t)
                 save_batch(batch)
-                train_PG()
+                train_PG(taskID = action_t)
                 losses = load_losses()
                 print('Losses:', losses)
                 reward = bandit.calc_reward(losses)
