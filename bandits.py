@@ -66,7 +66,6 @@ class Bandit:
         if len(self.tasks[task_ind]) == 0:
             return self.tasks[task_ind]
 
-        print('BS', self.batch_size, 'TS', self.tasks[task_ind])
         if len(self.tasks[task_ind]) < self.batch_size:
             batch = self.tasks[task_ind]
             self.tasks[task_ind] = np.array([])
@@ -93,16 +92,13 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
     
     #Initialize bandit, save past actions, save past rewards
     bandit = Bandit(tasks = dataset.tasks, batch_size = batch_size)
-    print('Created bandit...')
-    
+  
     
     ##### Initialization ######
     #Play each of the arms once, observe the reward
-    print('Gain:', gain_type)
+ 
 
     if gain_type=='PG':
-
-        print('Start training...')
         for ep in range(1, num_episodes+1):
             
             print('-----------------------------------------------')
@@ -113,10 +109,8 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                 batch = bandit.sample_task(i)
                 #Generate two random numbers to initialize loss
                 losses = np.random.randint(500, size=2)
-                print('Init losses:', losses)
                 reward = bandit.calc_reward(losses)
                 bandit.update_qfunc(reward, i)
-                print("initialising model...")
                 train_PG(init = True, taskID = i+1)
             
             for t in range(1, num_timesteps+1):
@@ -130,9 +124,12 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                 else:
                     train_PG(taskID = action_t+1, end = True)
                 losses = load_losses()
-                print('Losses:', losses)
                 reward = bandit.calc_reward(losses)
                 bandit.update_qfunc(reward, action_t)
+                print('-----------------------------------------------')
+                print('Current Q-function')
+                bandit.print_qfunc()
+                print('-----------------------------------------------')
     ''' 
     elif gain_type=='SPG':
         
