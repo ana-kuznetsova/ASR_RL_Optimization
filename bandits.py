@@ -37,13 +37,13 @@ class Bandit:
         for action in self._qfunc:
             q = self._qfunc[action]['val'] + c*np.sqrt((np.log(time_step)/self._qfunc[action]["a"]))
             action_vals.append(q)
-        best = np.argmax(action_vals)
+        best = int(np.argmax(action_vals))
 
         while(self.empty_tasks[best]):
             action_vals.pop(best)
             if len(action_vals) == 0:
                 return -1
-            best = np.argmax(action_vals)
+            best = int(np.argmax(action_vals))
         return best
 
         
@@ -130,9 +130,9 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                 #Take best action, observe reward, update qfunc
                 action_t = bandit.take_best_action(t, c)         
                 print(f"Playing action {action_t} on time step {t}...")
-                batch = bandit.sample_task(action_t)
-                if batch < 0:
+                if action_t==-1:
                     break
+                batch = bandit.sample_task(action_t)
                 save_batch(batch)
                 if t < num_timesteps:
                     train_PG(taskID = action_t+1)
