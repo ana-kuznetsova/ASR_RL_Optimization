@@ -1,5 +1,6 @@
 from data import DataSet
 import numpy as np
+import pickle
 from utils import read_command, save_batch, train_PG, load_losses
 
 class Bandit:
@@ -12,7 +13,11 @@ class Bandit:
         self.reward_hist = [] #history of unscaled rewards
         self.batch_size = batch_size
         self.empty_tasks = [False for i in self.tasks]
-        
+
+    def save_rhist(self, rhist_path):
+        f = open(rhist_path, 'wb')
+        pickle.dump(f, self.reward_hist)
+
     
     def update_qfunc(self, reward, action):
         self._qfunc[action]["a"]+=1
@@ -126,6 +131,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                 losses = load_losses()
                 reward = bandit.calc_reward(losses)
                 bandit.update_qfunc(reward, action_t)
+                bandit.save_rhist('reward_hist.pickle')
                 print('-----------------------------------------------')
                 print('Current Q-function')
                 bandit.print_qfunc()
