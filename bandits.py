@@ -75,6 +75,8 @@ class Bandit:
         if len(self.reward_hist) > 0:
             last_r = self.reward_hist[-1]   
         self.reward_hist.append(r+last_r)
+
+        return r
         
     def sample_task(self, task_ind):
         if len(self.stored_tasks[task_ind]) == 0:
