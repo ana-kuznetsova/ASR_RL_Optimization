@@ -11,7 +11,8 @@ class Bandit:
         self.num_tasks = len(tasks)
         self._qfunc = {a:{"a":0, "r":0, "val":0} for a in range(len(tasks))}
         self.policy = {}
-        self.reward_hist = [] #history of unscaled rewards
+        self.reward_hist = [] #history of scaled rewards
+        self.loss_hist = []
         self.batch_size = batch_size
         self.empty_tasks = [False for task in self.tasks]
     
@@ -52,24 +53,28 @@ class Bandit:
         
     def calc_reward(self, losses):
         L = losses[0]- losses[1]
-        last_loss = 0
-        if len(self.reward_hist) > 0:
-            last_loss = self.reward_hist[-1]   
-        self.reward_hist.append(L+last_loss)
-        
+
+        self.loss_hist.append(losses[1])
+
         ##Scale reward
         q_lo = np.ceil(np.quantile(self.reward_hist, 0.2))
         q_hi = np.ceil(np.quantile(self.reward_hist, 0.8))
         
         if L < q_lo:
-            return -1
+            r =  -1
         elif L > q_hi:
-            return 1
+            r = 1
         else:
             if ((q_hi-q_lo)-1) == 0:
-                return (2*(L-q_lo))/(((q_hi-q_lo)-1)+0.0000000000001)
+                r = (2*(L-q_lo))/(((q_hi-q_lo)-1)+0.0000000000001)
             else:
-                return (2*(L-q_lo))/((q_hi-q_lo)-1)
+                r = (2*(L-q_lo))/((q_hi-q_lo)-1)
+
+        last_r = 0
+
+        if len(self.reward_hist) > 0:
+            last_r = self.reward_hist[-1]   
+        self.reward_hist.append(r+last_r)
         
     def sample_task(self, task_ind):
         if len(self.stored_tasks[task_ind]) == 0:
