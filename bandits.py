@@ -59,7 +59,7 @@ class Bandit:
     def erase_rhist(self):
         self.reward_hist = []
 
-    def set_cummulative_r(scaled_r):
+    def set_cummulative_r(self, scaled_r):
         '''
         Store cumulative scaled reward 
         Per time step
@@ -93,7 +93,7 @@ class Bandit:
                 r = (2*(L-q_lo))/(((q_hi-q_lo)-1)+0.0000000000001)
             else:
                 r = (2*(L-q_lo))/((q_hi-q_lo)-1)
-                
+
         #Save reward to the hist of cumulative scaled rewards
         self.set_cummulative_r(r)
 
