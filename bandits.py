@@ -166,10 +166,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                     break
                 batch = bandit.sample_task(action_t)
                 save_batch(batch)
-                if t < num_timesteps:
-                    train_PG(taskID = action_t+1)
-                else:
-                    train_PG(taskID = action_t+1, end = True)
+                train_PG(taskID = action_t+1)
                 losses = load_losses()
                 reward = bandit.calc_reward(losses)
                 bandit.update_qfunc(reward, action_t)
