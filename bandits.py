@@ -13,13 +13,18 @@ class Bandit:
         self.policy = {}
         self.reward_hist = [] #history of scaled rewards
         self.loss_hist = []
+        self.sc_reward_hist = []
         self.batch_size = batch_size
         self.empty_tasks = [False for task in self.tasks]
     
 
-    def save_rhist(self, rhist_path):
+    def save_sc_rhist(self, rhist_path):
+        '''
+        Save the history of scaled cumulative rewards
+        to file 
+        '''
         f = open(rhist_path, 'wb')
-        pickle.dump(self.reward_hist, f)
+        pickle.dump(self.sc_reward_hist, f)
 
     def save_lhist(self, lhist_path):
         f = open(lhist_path, 'wb')
@@ -53,12 +58,28 @@ class Bandit:
         
     def erase_rhist(self):
         self.reward_hist = []
+
+    def set_cummulative_r(scaled_r):
+        '''
+        Store cumulative scaled reward 
+        Per time step
+        '''
+        last_r = 0
+        if len(self.sc_reward_hist):
+            last_r = self.sc_reward_hist[-1]        
+        self.sc_reward_hist.append(scaled_r + last_r)
         
     def calc_reward(self, losses):
+        '''
+        Rescales reward
+        Stores unscaled reward in reward_hist
+        Saves loss hist to loss_hist
+        '''
         L = losses[0]- losses[1]
 
         self.loss_hist.append(losses[1])
-
+        self.reward_hist.append(L)
+    
         ##Scale reward
         q_lo = np.ceil(np.quantile(self.reward_hist, 0.2))
         q_hi = np.ceil(np.quantile(self.reward_hist, 0.8))
@@ -72,12 +93,9 @@ class Bandit:
                 r = (2*(L-q_lo))/(((q_hi-q_lo)-1)+0.0000000000001)
             else:
                 r = (2*(L-q_lo))/((q_hi-q_lo)-1)
-
-        last_r = 0
-
-        if len(self.reward_hist) > 0:
-            last_r = self.reward_hist[-1]   
-        self.reward_hist.append(r+last_r)
+                
+        #Save reward to the hist of cumulative scaled rewards
+        self.set_cummulative_r(r)
 
         return r
         
@@ -155,7 +173,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                 losses = load_losses()
                 reward = bandit.calc_reward(losses)
                 bandit.update_qfunc(reward, action_t)
-                bandit.save_rhist('reward_hist.pickle')
+                bandit.save_sc_rhist('sc_reward_hist.pickle')
                 bandit.save_lhist('loss_hist.pickle')
                 print('-----------------------------------------------')
                 print('Current Q-function')
