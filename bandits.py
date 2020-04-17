@@ -150,14 +150,11 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
     ##### Initialization ######
     #Play each of the arms once, observe the reward
 
-    #Initialize loss before training
-    init_loss()
-
     for i in range(len(bandit.tasks)):
         batch = bandit.sample_task(i)
         save_batch(batch)
         init_PG(i+1)
-        losses = load_losses()        
+        losses = load_losses(init=True)        
         reward = bandit.calc_reward(losses)
         bandit.update_qfunc(reward, i)
     

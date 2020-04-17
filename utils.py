@@ -50,8 +50,6 @@ def init_model_PG(best_greedy_a):
     os.system('mv ' + best_a_path + '/N/slate/anakuzne/tt_ckpt_automated_curr/main_model/')
  
 
-def init_loss():
-    os.system('bash scripts/tt_init_loss.sh')
 
 '''
 def train_SPG(sample_it=0):
@@ -65,10 +63,12 @@ def train_SPG(sample_it=0):
 '''
 
 
-def load_losses():
-    
-    with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_before.json') as f:
-        loss_before = json.load(f)
+def load_losses(init=False):
+    if init:
+        loss_before = 0
+    else: 
+        with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_before.json') as f:
+            loss_before = json.load(f)
     
     with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_after.json') as f:
         loss_after = json.load(f)
