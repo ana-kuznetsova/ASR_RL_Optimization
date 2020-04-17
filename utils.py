@@ -47,7 +47,7 @@ def init_PG(taskID):
     os.system('bash scripts/tt_init_'+str(taskID)+'.sh') 
 
 def init_model_PG(best_greedy_a):
-    best_a_path = '/N/slate/anakuzne/tt_ckpt_automated_curr/' + str(best_greedy_a) + '/ '
+    best_a_path = '/N/slate/anakuzne/tt_ckpt_automated_curr/' + str(best_greedy_a+1) + '/ '
     os.system('cp -r ' + best_a_path + '/N/slate/anakuzne/tt_ckpt_automated_curr/main_model/')
  
 
