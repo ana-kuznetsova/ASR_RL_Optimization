@@ -40,19 +40,6 @@ class Bandit:
         
     def print_qfunc(self):
         print(self._qfunc)
-    
-    def find_best_action(self, actions):
-        '''
-        This function returns the best action from a list of action tuples. 
-        An action tuple -- > (action_value, action_index).
-        '''
-        best = -float('inf')
-        best_Action = 0
-        for action in actions:
-            if action[0] > best:
-                best = action[0]
-                best_Action = action[1]
-        return best_Action
 
     def take_best_action(self, time_step, c=0.01):
         action_vals = []
@@ -66,7 +53,10 @@ class Bandit:
 
         if len(action_vals) == 0:
             return -1 
-        best = self.find_best_action(action_vals)
+
+        action_vals = sorted(action_vals, key = lambda x: x[0])
+        best = action_vals[0][1]
+        
         return best
         
     def erase_rhist(self):
