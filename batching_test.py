@@ -11,7 +11,9 @@ def test(tasks):
             print('-----------------------------------------------')
             print(f"Starting episode {ep} ...")
             print('-----------------------------------------------')
-            
+            for task in range(len(bandit.stored_tasks)):
+                print("Task",task,"with",len(bandit.stored_tasks[task]),"examples")
+
             for t in range(1, 10):
                 #Testing batching
                 action_t = bandit.take_best_action(t, c=0.01)

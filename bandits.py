@@ -41,20 +41,32 @@ class Bandit:
     def print_qfunc(self):
         print(self._qfunc)
     
+    def find_best_action(self, actions):
+        '''
+        This function returns the best action from a list of action tuples. 
+        An action tuple -- > (action_value, action_index).
+        '''
+        best = -float('inf')
+        best_Action = 0
+        for action in actions:
+            if action[0] > best:
+                best = action[0]
+                best_Action = action[1]
+        return best_Action
+
     def take_best_action(self, time_step, c=0.01):
         action_vals = []
         for action in self._qfunc:
             q = self._qfunc[action]['val'] + c*np.sqrt((np.log(time_step)/self._qfunc[action]["a"]))
             action_vals.append(q)
-        best = int(np.argmax(action_vals))
-
-        while(self.empty_tasks[best]):
-            action_vals.pop(best)
-            if len(action_vals) == 0:
-                return -1
-            best = int(np.argmax(action_vals))
+        
+        #Store only those actions which have non empty tasks. 
+        #To preserve action index we store a tuple of (q_func value, action index) in action vals.
+        action_vals = [(val,i) for i,val in enumerate(action_vals) if not self.empty_tasks[i]]
+        if len(action_vals) == 0:
+            return -1 
+        best = self.find_best_action(action_vals)
         return best
-
         
     def erase_rhist(self):
         self.reward_hist = []
@@ -109,7 +121,7 @@ class Bandit:
             self.empty_tasks[task_ind] = True
             return batch
 
-        if len(self.tasks[task_ind]) >= self.batch_size:
+        if len(self.stored_tasks[task_ind]) >= self.batch_size:
             batch = np.random.choice(self.stored_tasks[task_ind], self.batch_size)
             self.stored_tasks[task_ind] = np.array([row for row in self.stored_tasks[task_ind] if row not in batch])
             return batch
