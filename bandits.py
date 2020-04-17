@@ -45,18 +45,18 @@ class Bandit:
         action_vals = []
         for action in self._qfunc:
             q = self._qfunc[action]['val'] + c*np.sqrt((np.log(time_step)/self._qfunc[action]["a"]))
-            action_vals.append(q)
-                
+            action_vals.append((q,action))
+        
         #Store only those actions which have non empty tasks. 
         #To preserve action index we store a tuple of (q_func value, action index) in action vals.
-        action_vals = [(val,i) for i,val in enumerate(action_vals) if not self.empty_tasks[i]]
+        action_vals = [tup for tup in action_vals if not self.empty_tasks[tup[1]]]
 
         if len(action_vals) == 0:
             return -1 
 
         action_vals = sorted(action_vals)
         best = action_vals[-1][1]
-        
+    
         return best
         
     def erase_rhist(self):
