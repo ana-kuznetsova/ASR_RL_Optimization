@@ -63,6 +63,7 @@ class Bandit:
         #Store only those actions which have non empty tasks. 
         #To preserve action index we store a tuple of (q_func value, action index) in action vals.
         action_vals = [(val,i) for i,val in enumerate(action_vals) if not self.empty_tasks[i]]
+
         if len(action_vals) == 0:
             return -1 
         best = self.find_best_action(action_vals)
@@ -122,7 +123,7 @@ class Bandit:
             return batch
 
         if len(self.stored_tasks[task_ind]) >= self.batch_size:
-            batch = np.random.choice(self.stored_tasks[task_ind], self.batch_size)
+            batch = np.random.choice(self.stored_tasks[task_ind], self.batch_size, replace = False)
             self.stored_tasks[task_ind] = np.array([row for row in self.stored_tasks[task_ind] if row not in batch])
             return batch
 
