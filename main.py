@@ -1,7 +1,5 @@
 from data import DataSet
 from bandits import UCB1
-from utils import clean_ckpt_dirs
-
 
 import pandas as pd
 import numpy as np

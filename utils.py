@@ -2,10 +2,6 @@ import pandas as pd
 import os
 import json
 
-def read_command(path):
-    with open(path, 'r') as fo:
-        return fo.read()
-
 def save_batch(current_batch):
     '''
     Saves current batch to train in DeepSpeech
@@ -23,11 +19,11 @@ def save_batch(current_batch):
 
 def train_PG(taskID, init = False, end = False):
     if init:
-        os.system('bash tt_init_'+str(taskID)+'.sh')
+        os.system('bash scripts/tt_init_'+str(taskID)+'.sh')
     if end:
-        os.system('bash tt_end_'+str(taskID)+'.sh')
+        os.system('bash scripts/tt_end_'+str(taskID)+'.sh')
     if (not end) and (not init):    
-        os.system('bash tt_train_pg'+str(taskID)+'.sh')
+        os.system('bash scripts/tt_train_pg'+str(taskID)+'.sh')
 
 '''
 def train_SPG(sample_it=0):
