@@ -167,7 +167,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
 
     init_action = bandit.take_greedy_action()
     #Move best action model to the main model ckpt dir
-    init_model_PG()
+    init_model_PG(init_action)
 
     #Start training from that checkpoint
 
