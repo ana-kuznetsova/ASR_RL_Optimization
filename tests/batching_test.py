@@ -1,5 +1,9 @@
 import numpy as np
+import sys
+sys.path.append('..')
 from bandits import *
+
+
 
 def test(tasks):
     bandit = Bandit(tasks, 64)
