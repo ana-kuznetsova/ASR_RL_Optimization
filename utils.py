@@ -39,13 +39,19 @@ def save_batch(current_batch):
     df.to_csv('/N/slate/anakuzne/tatar/clips/batch.csv')
 
 
-def train_PG(taskID, init = False, end = False):
-    if init:
-        os.system('bash scripts/tt_init_'+str(taskID)+'.sh')
-    if end:
-        os.system('bash scripts/tt_end_'+str(taskID)+'.sh')
-    if (not end) and (not init):    
-        os.system('bash scripts/tt_train_pg'+str(taskID)+'.sh')
+def train_PG():
+    os.system('bash scripts/tt_train_pg.sh')
+
+def init_PG(taskID):
+    os.system('bash scripts/tt_init_'+str(taskID)+'.sh') 
+
+def init_model_PG(best_greedy_a):
+    best_a_path = '/N/slate/anakuzne/tt_ckpt_automated_curr/' + str(best_greedy_a) + '/ '
+    os.system('mv ' + best_a_path + '/N/slate/anakuzne/tt_ckpt_automated_curr/main_model/')
+ 
+
+def init_loss():
+    os.system('bash scripts/tt_init_loss.sh')
 
 '''
 def train_SPG(sample_it=0):

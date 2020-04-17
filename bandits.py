@@ -1,7 +1,7 @@
 from data import DataSet
 import numpy as np
 import pickle
-from utils import save_batch, train_PG, load_losses
+from utils import *
 
 class Bandit:
     def __init__(self, tasks, batch_size):
@@ -40,6 +40,15 @@ class Bandit:
         
     def print_qfunc(self):
         print(self._qfunc)
+
+    def take_greedy_action(self):
+        '''
+        Exclusively used for initialization
+        to move checkpoint for the main model
+        '''
+        action_vals = [self._qfunc[action]['val'] for action in self._qfunc]
+
+        return int(np.argmax(action_vals))
 
     def take_best_action(self, time_step, c=0.01):
         action_vals = []
@@ -141,14 +150,29 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
     ##### Initialization ######
     #Play each of the arms once, observe the reward
 
+    #Initialize loss before training
+    init_loss()
+
     for i in range(len(bandit.tasks)):
         batch = bandit.sample_task(i)
-        #Generate two random numbers to initialize loss
-        losses = np.random.randint(500, size=2)
+        save_batch(batch)
+        init_PG(i+1)
+        losses = load_losses()        
         reward = bandit.calc_reward(losses)
         bandit.update_qfunc(reward, i)
-        train_PG(init = True, taskID = i+1)
- 
+    
+
+
+    '''
+    At this point we generated initial losses.
+    Now pick up the best action and load the model for the best action
+    '''
+
+    init_action = bandit.take_greedy_action()
+    #Move best action model to the main model ckpt dir
+    init_model_PG()
+
+    #Start training from that checkpoint
 
     if gain_type=='PG':
 
@@ -169,7 +193,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                     break
                 batch = bandit.sample_task(action_t)
                 save_batch(batch)
-                train_PG(taskID = action_t+1)
+                train_PG()
                 losses = load_losses()
                 reward = bandit.calc_reward(losses)
                 bandit.update_qfunc(reward, action_t)
