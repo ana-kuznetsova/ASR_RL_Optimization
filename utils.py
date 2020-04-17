@@ -65,15 +65,15 @@ def train_SPG(sample_it=0):
 
 def load_losses(init=False):
     if init:
-        loss_before = [0]
+        L1 = 0
     else: 
         with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_before.json') as f:
             loss_before = json.load(f)
+        L1 = sum([l['loss'] for l in loss_before])/len(loss_before)
     
     with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_after.json') as f:
         loss_after = json.load(f)
 
-    L1 = sum([l['loss'] for l in loss_before])/len(loss_before)
     L2 = sum([l['loss'] for l in loss_after])/len(loss_before)
 
     return [L1, L2]
