@@ -54,7 +54,7 @@ class Bandit:
         if len(action_vals) == 0:
             return -1 
 
-        action_vals = sorted(action_vals, key = lambda x: x[0])
+        action_vals = sorted(action_vals)
         best = action_vals[-1][1]
         
         return best
