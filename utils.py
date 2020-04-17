@@ -48,7 +48,7 @@ def init_PG(taskID):
 
 def init_model_PG(best_greedy_a):
     best_a_path = '/N/slate/anakuzne/tt_ckpt_automated_curr/' + str(best_greedy_a) + '/ '
-    os.system('mv ' + best_a_path + '/N/slate/anakuzne/tt_ckpt_automated_curr/main_model/')
+    os.system('cp -r ' + best_a_path + '/N/slate/anakuzne/tt_ckpt_automated_curr/main_model/')
  
 
 
