@@ -6,8 +6,8 @@ from utils import read_command, save_batch, train_PG, load_losses
 class Bandit:
     def __init__(self, tasks, batch_size):
         self.actions = np.arange(len(tasks))
-        self.stored_tasks = None
         self.tasks = tasks
+        self.stored_tasks = self.tasks
         self.num_tasks = len(tasks)
         self._qfunc = {a:{"a":0, "r":0, "val":0} for a in range(len(tasks))}
         self.policy = {}
@@ -56,7 +56,7 @@ class Bandit:
 
         action_vals = sorted(action_vals, key = lambda x: x[0])
         best = action_vals[0][1]
-        
+
         return best
         
     def erase_rhist(self):
