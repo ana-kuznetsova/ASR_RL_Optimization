@@ -6,7 +6,7 @@ from utils import read_command, save_batch, train_PG, load_losses
 class Bandit:
     def __init__(self, tasks, batch_size):
         self.actions = np.arange(len(tasks))
-        self.stored_tasks = tasks
+        self.stored_tasks = None
         self.tasks = tasks
         self.num_tasks = len(tasks)
         self._qfunc = {a:{"a":0, "r":0, "val":0} for a in range(len(tasks))}
@@ -15,7 +15,7 @@ class Bandit:
         self.loss_hist = []
         self.sc_reward_hist = []
         self.batch_size = batch_size
-        self.empty_tasks = [False for task in self.tasks]
+        self.empty_tasks = None
     
 
     def save_sc_rhist(self, rhist_path):
@@ -103,7 +103,7 @@ class Bandit:
         if len(self.stored_tasks[task_ind]) == 0:
             return self.stored_tasks[task_ind]
 
-        if len(self.tasks[task_ind]) < self.batch_size:
+        if len(self.stored_tasks[task_ind]) < self.batch_size:
             batch = self.stored_tasks[task_ind]
             self.stored_tasks[task_ind] = np.array([])
             self.empty_tasks[task_ind] = True
@@ -115,7 +115,7 @@ class Bandit:
             return batch
 
     def initialise_tasks(self):
-        self.stored_tasks = self.tasks
+        self.stored_tasks = [[i for i in row] for row in self.tasks]
         self.empty_tasks = [False for task in self.tasks]
 
 def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_type='PG'):

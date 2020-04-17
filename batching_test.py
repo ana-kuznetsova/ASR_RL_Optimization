@@ -19,13 +19,13 @@ def test(tasks):
                 print("Action:", action_t, "Episode:", ep, "Timestep:",t, "Batch_len:", len(batch), "Empty_task_Arr:", bandit.empty_tasks)
                 if action_t==-1:
                     break
-                
                 #Dummy reward
-                reward = np.random.randint(100)
+                reward = np.random.randint(10,100)
                 bandit.update_qfunc(reward, action_t)
                 
 
 if __name__ == "__main__":
+    print("Batches initialized with 70 examples with batchsize of 64")
     tasks = [[i for i in range(70)] for j in range(3)]
     test(tasks)
 
