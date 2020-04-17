@@ -1,7 +1,7 @@
 from data import DataSet
 import numpy as np
 import pickle
-from utils import read_command, save_batch, train_PG, load_losses
+from utils import save_batch, train_PG, load_losses
 
 class Bandit:
     def __init__(self, tasks, batch_size):
