@@ -74,6 +74,6 @@ def load_losses(init=False):
     with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_after.json') as f:
         loss_after = json.load(f)
 
-    L2 = sum([l['loss'] for l in loss_after])/len(loss_before)
+    L2 = sum([l['loss'] for l in loss_after])/len(loss_after)
 
     return [L1, L2]
