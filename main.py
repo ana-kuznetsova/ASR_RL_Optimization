@@ -1,7 +1,6 @@
 from data import DataSet
 from bandits import UCB1
-from utils import clean_ckpt_dirs
-
+from utils import clear_dirs
 
 import pandas as pd
 import numpy as np
@@ -28,6 +27,7 @@ Args:
 def main(args):
 
     #Clean up checkpoint dirs
+    clear_dirs()
 
     df = pd.read_csv(args.df_path)
 

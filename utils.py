@@ -2,9 +2,27 @@ import pandas as pd
 import os
 import json
 
-def read_command(path):
-    with open(path, 'r') as fo:
-        return fo.read()
+
+def clear_dirs():
+    '''
+    Cleans up directories before the next training
+    '''
+    def delete_files(folder):
+        for filename in os.listdir(folder): 
+            file_path = os.path.join(folder, filename) 
+            try: 
+                if os.path.isfile(file_path) or os.path.islink(file_path): 
+                    os.unlink(file_path) 
+                elif os.path.isdir(file_path): 
+                    shutil.rmtree(file_path) 
+            except Exception as e:
+                print('Failed to delete %s. Reason: %s' % (file_path, e))
+    
+
+    delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/1/')
+    delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/2/')
+    delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/3/')
+    delete_files('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/')
 
 def save_batch(current_batch):
     '''
@@ -23,11 +41,11 @@ def save_batch(current_batch):
 
 def train_PG(taskID, init = False, end = False):
     if init:
-        os.system('bash tt_init_'+str(taskID)+'.sh')
+        os.system('bash scripts/tt_init_'+str(taskID)+'.sh')
     if end:
-        os.system('bash tt_end_'+str(taskID)+'.sh')
+        os.system('bash scripts/tt_end_'+str(taskID)+'.sh')
     if (not end) and (not init):    
-        os.system('bash tt_train_pg'+str(taskID)+'.sh')
+        os.system('bash scripts/tt_train_pg'+str(taskID)+'.sh')
 
 '''
 def train_SPG(sample_it=0):
@@ -53,7 +71,3 @@ def load_losses():
     L2 = sum([l['loss'] for l in loss_after])/len(loss_before)
 
     return [L1, L2]
-
-
-def clean_ckpt_dirs():
-    os.system('rm -r /N/slate/anakuzne/tt_ckpt_automated_curr/')
