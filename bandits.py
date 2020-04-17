@@ -6,8 +6,8 @@ from utils import save_batch, train_PG, load_losses
 class Bandit:
     def __init__(self, tasks, batch_size):
         self.actions = np.arange(len(tasks))
-        self.stored_tasks = None
         self.tasks = tasks
+        self.stored_tasks = [i for i in self.tasks]
         self.num_tasks = len(tasks)
         self._qfunc = {a:{"a":0, "r":0, "val":0} for a in range(len(tasks))}
         self.policy = {}
