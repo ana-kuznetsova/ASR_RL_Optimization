@@ -18,11 +18,12 @@ def test(tasks):
             for task in range(len(bandit.stored_tasks)):
                 print("Task",task,"with",len(bandit.stored_tasks[task]),"examples")
 
-            for t in range(1, 10):
+            for t in range(1, 100):
                 #Testing batching
                 action_t = bandit.take_best_action(t, c=0.01)
-                batch = bandit.sample_task(action_t)         
-                print("Action:", action_t, "Episode:", ep, "Timestep:",t, "Batch_len:", len(batch), "Empty_task_Arr:", bandit.empty_tasks)
+                batch = bandit.sample_task(action_t)
+                resample = bandit.resample_task(batch, action_t)  
+                print("Action:", action_t, "Episode:", ep, "Timestep:",t, "batch_len:", len(batch), "Resampled batch_len:", len(resample), "Empty_task_Arr:", bandit.empty_tasks)         
                 if action_t==-1:
                     break
                 #Dummy reward
@@ -31,7 +32,7 @@ def test(tasks):
                 
 
 if __name__ == "__main__":
-    print("Batches initialized with 70 examples with batchsize of 64")
-    tasks = [[i for i in range(70)] for j in range(3)]
+    print("Batches initialized with 200 examples with batchsize of 64")
+    tasks = [[i for i in range(200)] for j in range(3)]
     test(tasks)
 
