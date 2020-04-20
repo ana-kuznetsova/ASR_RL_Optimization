@@ -126,6 +126,17 @@ class Bandit:
             self.stored_tasks[task_ind] = np.array([row for row in self.stored_tasks[task_ind] if row not in batch])
             return batch
 
+    
+    def resample_task(self, batch, task_ind):
+        '''
+        This function resamples from the passed task_iD. It also makes sure that the resampled
+        batch contains rows that are not already sampled for the current batch.
+        '''
+        resampled_batch =  np.random.choice(self.tasks[task_ind], self.batch_size*2, replace = False)
+        resampled_batch = [row for row in resampled_batch if row not in batch]
+        resampled_batch = np.random.choice(resampled_batch, self.batch_size, replace = False)
+        return resampled_batch
+
     def initialise_tasks(self):
         self.stored_tasks = [[i for i in row] for row in self.tasks]
         self.empty_tasks = [False for task in self.tasks]
@@ -153,7 +164,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
     for i in range(len(bandit.tasks)):
         batch = bandit.sample_task(i)
         save_batch(batch)
-        init_PG(i+1)
+        create_model(i+1)
         losses = load_losses(init=True)        
         reward = bandit.calc_reward(losses)
         bandit.update_qfunc(reward, i)
@@ -167,55 +178,36 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
 
     init_action = bandit.take_greedy_action()
     #Move best action model to the main model ckpt dir
-    init_model_PG(init_action)
+    initialise_model(init_action)
 
     #Start training from that checkpoint
+    for ep in range(1, num_episodes+1):
 
-    if gain_type=='PG':
-
-
-        for ep in range(1, num_episodes+1):
-
-            bandit.initialise_tasks()
-            
-            print('-----------------------------------------------')
-            print(f"Starting episode {ep} ...")
-            print('-----------------------------------------------')
-            
-            for t in range(1, num_timesteps+1):
-                #Take best action, observe reward, update qfunc
-                action_t = bandit.take_best_action(t, c)         
-                print(f"Playing action {action_t} on time step {t}...")
-                if action_t==-1:
-                    break
-                batch = bandit.sample_task(action_t)
-                save_batch(batch)
-                train_PG()
-                losses = load_losses()
-                reward = bandit.calc_reward(losses)
-                bandit.update_qfunc(reward, action_t)
-                bandit.save_sc_rhist('sc_reward_hist.pickle')
-                bandit.save_lhist('loss_hist.pickle')
-                print('-----------------------------------------------')
-                print('Current Q-function')
-                bandit.print_qfunc()
-                print('-----------------------------------------------')
-
-    ''' 
-    elif gain_type=='SPG':
+        bandit.initialise_tasks()
+        print('-----------------------------------------------')
+        print(f"Starting episode {ep} ...")
+        print('-----------------------------------------------')
         
-        for t in range(num_episodes):
+        for t in range(1, num_timesteps+1):
             #Take best action, observe reward, update qfunc
             action_t = bandit.take_best_action(t, c)         
             print(f"Playing action {action_t} on time step {t}...")
-            print('-----------------------------------------------')
+            if action_t==-1:
+                break
             batch = bandit.sample_task(action_t)
             save_batch(batch)
-            train_SPG(sample_it=0)
-            batch = bandit.sample_task(action_t)
-            save_batch(batch)
-            train_SPG(sample_it=0)
-            losses = load_losses()            
+            if gain_type == 'PG':
+                train_PG()
+            if gain_type == 'SPG':
+                train_SPG()
+            losses = load_losses()
             reward = bandit.calc_reward(losses)
-            bandit.update_qfunc(reward, action_t)  
-    '''      
+            bandit.update_qfunc(reward, action_t)
+            bandit.save_sc_rhist('sc_reward_hist.pickle')
+            bandit.save_lhist('loss_hist.pickle')
+            print('-----------------------------------------------')
+            print('Current Q-function')
+            bandit.print_qfunc()
+            print('-----------------------------------------------')
+
+        
