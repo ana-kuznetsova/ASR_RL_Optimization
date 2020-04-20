@@ -26,7 +26,7 @@ def clear_dirs():
     delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/main_model/')
     delete_files('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/')
 
-def save_batch(current_batch):
+def save_batch(current_batch, batch_filename):
     '''
     Saves current batch to train in DeepSpeech
     Params:
@@ -38,7 +38,7 @@ def save_batch(current_batch):
     s = [v.replace('.mp3', '.wav') for v in current_batch]
     df = df[df['wav_filename'].isin(s)]
 
-    df.to_csv('/N/slate/anakuzne/tatar/clips/batch.csv')
+    df.to_csv('/N/slate/anakuzne/tatar/clips/'+batch_filename+'.csv')
 
 def create_model(taskID):
     os.system('bash scripts/tt_init_'+str(taskID)+'.sh') 

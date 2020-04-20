@@ -195,10 +195,12 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
             if action_t==-1:
                 break
             batch = bandit.sample_task(action_t)
-            save_batch(batch)
+            save_batch(batch = batch, batch_filename = 'batch')
             if gain_type == 'PG':
                 train_PG()
             if gain_type == 'SPG':
+                resampled_batch = bandit.resample_task(batch, action_t)
+                save_batch(batch = batch, batch_filename = 'resampled_batch')
                 train_SPG()
             losses = load_losses()
             reward = bandit.calc_reward(losses)
