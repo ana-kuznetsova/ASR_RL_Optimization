@@ -54,7 +54,7 @@ class Bandit:
         '''
         #probabilities of weights
         sum_w = sum(self.W_exp3)
-        p = self.W_exp3/sum_w
+        p = np.exp(self.W_exp3)/sum(np.exp(self.W_exp3))
         #Number of tasks
         num_tasks = len(self.tasks)
         for action in self._qfunc:
@@ -108,8 +108,8 @@ class Bandit:
         if len(self.sc_reward_hist):
             last_r = self.sc_reward_hist[-1]        
         self.sc_reward_hist.append(scaled_r + last_r)
-        max_reward = max(self.sc_reward_hist)
-        self.sc_reward_hist = [i/max_reward for i in self.sc_reward_hist]
+        #max_reward = max(self.sc_reward_hist)
+        #self.sc_reward_hist = [i/max_reward for i in self.sc_reward_hist]
 
     def calc_raw_reward(self, losses):
         '''
@@ -199,8 +199,8 @@ class Bandit:
 
 def Hedge(bandit, feedback, gamma, lr = 0.05, init = False):
     sum_w = sum(bandit.W_exp3)
-    p_t = bandit.W_exp3/sum_w
-    num_tasks = len(self.tasks)
+    p_t =  p = np.exp(bandit.W_exp3)/sum(np.exp(bandit.W_exp3))
+    num_tasks = len(bandit.tasks)
     #Update weights and qfunc
     for action in num_tasks: 
         bandit.W_exp3[action] = bandit.W_exp3[action] * ((1+lr)**feedback[action])
@@ -212,6 +212,24 @@ def Hedge(bandit, feedback, gamma, lr = 0.05, init = False):
 
 def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, gamma=0.01, gain_type='PG'):
     bandit = Bandit(tasks = dataset.tasks, batch_size = batch_size)
+
+    ##### Initialization ######
+    #Play each of the arms once, observe the reward
+    for i in range(len(bandit.tasks)):
+        batch = bandit.sample_task(i)
+        save_batch(current_batch = batch, batch_filename = 'batch')
+        create_model(i+1)
+        losses = load_losses(init=True)        
+        reward = bandit.calc_reward(losses)
+        bandit.update_qfunc_EXP3(reward, i)
+    '''
+    At this point we generated initial losses.
+    Now pick up the best action and load the model for the best action
+    '''
+    init_action = bandit.take_greedy_action()
+    feedback = [1 if i == init_action else 0 for i in range(len(bandit.tasks)]
+    #Move best action model to the main model ckpt dir
+    initialise_model(init_action)
     for ep in range(1, num_episodes+1):
 
         bandit.initialise_tasks()
@@ -220,11 +238,10 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, gamma
         print('-----------------------------------------------')
 
         for t in range(1, num_timesteps+1):
-            action_t = bandit.take_best_action(t, c)
             choice = np.random.choice([0,1], p = [1 - gamma, gamma])
             #Exploration
             if choice:
-                num_tasks = len(self.tasks)
+                num_tasks = len(bandit.tasks)
                 uni_prob = [1/num_tasks for i in range(num_tasks)]
                 tasks = [i for i in range(num_tasks)]
                 action_t = np.random.choice(tasks, p = uni_prob)
@@ -244,9 +261,11 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, gamma
             #Constructing fake feedback to feed Hedge
             num_tasks = len(bandit.tasks)
             losses = load_losses()
-            reward = bandit.calc_raw_reward(losses)
-            feedback = [reward/self.q_func[i]['val'] if i == action_t else 0 for i in range(num_tasks)]
-
+            reward = bandit.calc_reward(losses)
+            if bandit.q_func[i]['val'] > 0:
+                feedback = [reward/bandit.q_func[i]['val'] if i == action_t else 0 for i in range(num_tasks)]
+            else:
+                feedback = [1 if i == action_t else 0 for i in range(num_tasks)]
             print('Current reward:', reward)
             #Save histories to plot
             bandit.save_sc_rhist('sc_reward_hist_EXP3.pickle')
@@ -256,10 +275,6 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, gamma
             print('Current Q-function')
             bandit.print_qfunc()
             print('-----------------------------------------------')
-
-
-
-
 
 
 def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_type='PG'):
