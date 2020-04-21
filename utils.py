@@ -1,4 +1,5 @@
 import pandas as pd 
+import numpy as np
 import os
 import json
 import shutil
@@ -70,7 +71,9 @@ def train_SPG(sample_it=0):
 
 def load_losses(init=False):
     if init:
-        L1 = 0
+        #Initialize losses with approximate loss values
+        #L1 = int(np.random.randint(low=600, high=700, size=1))
+        L1 = 1000
     else: 
         with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_before.json') as f:
             loss_before = json.load(f)

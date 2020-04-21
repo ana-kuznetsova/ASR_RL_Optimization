@@ -21,7 +21,7 @@ Args:
    x batch_path (str):path to save training batch for DeepSpeech 
     c=0.01, 
     gain_type='SPG'
-    python main.py --df_path='tt_train_with_scores.csv' --num_tasks=3 --csv='train.csv' --num_episodes=1 --batch_size=64 --gain_type='PG'
+    python main.py --df_path='tt_train_with_scores.csv' --num_tasks=3 --csv='train.csv' --num_episodes=1 --batch_size=64 --gain_type='PG' --c 0.5
 '''
 
 def main(args):
