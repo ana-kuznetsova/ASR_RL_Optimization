@@ -86,6 +86,25 @@ class Bandit:
         if len(self.sc_reward_hist):
             last_r = self.sc_reward_hist[-1]        
         self.sc_reward_hist.append(scaled_r + last_r)
+
+    def calc_raw_reward(self, losses):
+        '''
+        Returns raw reward without rescaling
+        '''
+
+        print('Loss array:', losses)
+        L = losses[0]- losses[1]
+
+        print('L:', L)
+
+        self.loss_hist.append(losses[1])
+        print('Loss hist:', self.loss_hist)
+        self.reward_hist.append(L)
+
+        #Save reward to the hist of cumulative scaled rewards
+        self.set_cummulative_r(r)
+
+        return r
         
     def calc_reward(self, losses):
         '''
@@ -205,7 +224,8 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                 save_batch(batch)
                 train_PG()
                 losses = load_losses()
-                reward = bandit.calc_reward(losses)
+                #reward = bandit.calc_reward(losses)
+                reward = bandit.calc_raw_reward(losses)
                 print('Current reward:', reward)
                 bandit.update_qfunc(reward, action_t)
                 
