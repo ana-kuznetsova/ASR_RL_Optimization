@@ -17,6 +17,7 @@ class Bandit:
         self.sc_reward_hist = []
         self.batch_size = batch_size
         self.empty_tasks = None
+        self.W_exp3 = np.ones(len(self.tasks))
     
 
     def save_sc_rhist(self, rhist_path):
@@ -36,13 +37,31 @@ class Bandit:
         pickle.dump(self.action_hist, f)
 
     
-    def update_qfunc(self, reward, action):
+    def update_qfunc_UCB1(self, reward, action):
+        '''
+        The update function to be used for UCB1
+        '''
         self._qfunc[action]["a"]+=1
         self._qfunc[action]["r"]+=reward
         if self._qfunc[action]["r"] == 0:
             self._qfunc[action]["val"] = self._qfunc[action]["r"]/(self._qfunc[action]["a"]+0.000000001)
         else:
             self._qfunc[action]["val"] = self._qfunc[action]["r"]/self._qfunc[action]["a"]
+
+    def update_qfunc_EXP3(self, reward, gamma):
+        '''
+        The update function to be used for EXP3
+        '''
+        #probabilities of weights
+        sum_w = sum(self.W_exp3)
+        p = self.W_exp3/sum_w
+        #Number of tasks
+        num_tasks = len(self.tasks)
+        for action in self._qfunc:
+            self._qfunc[action]['val'] = gamma*(1/num_tasks) + (1-gamma)*p[action]
+
+
+
         
     def print_qfunc(self):
         print(self._qfunc)
@@ -56,12 +75,16 @@ class Bandit:
 
         return int(np.argmax(action_vals))
 
-    def take_best_action(self, time_step, c=0.01):
+    def take_best_action(self, mode, c=0.01, time_step=None):
         action_vals = []
-        for action in self._qfunc:
-            q = self._qfunc[action]['val'] + c*np.sqrt((np.log(time_step)/self._qfunc[action]["a"]))
-            action_vals.append((q,action))
+        if mode == 'UCB1':
+            for action in self._qfunc:
+                q = self._qfunc[action]['val'] + c*np.sqrt((np.log(time_step)/self._qfunc[action]["a"]))
+                action_vals.append((q,action))
         
+        if mode == 'EXP3':
+            for action in self._qfunc:
+                action_vals.append((q,action))    
         #Store only those actions which have non empty tasks. 
         #To preserve action index we store a tuple of (q_func value, action index) in action vals.
         action_vals = [tup for tup in action_vals if not self.empty_tasks[tup[1]]]
@@ -174,6 +197,47 @@ class Bandit:
         self.stored_tasks = [[i for i in row] for row in self.tasks]
         self.empty_tasks = [False for task in self.tasks]
 
+def Hedge(bandit, feedback, gamma, lr = 0.05, init = False):
+    sum_w = sum(bandit.W_exp3)
+    p_t = bandit.W_exp3/sum_w
+   
+    losses = load_losses(init = init)  
+    reward = bandit.calc_reward(losses)
+    bandit.W_exp3 = bandit.W_exp3*((1+lr)**reward)
+    bandit.update_qfunc_EXP3(reward = reward, gamma = gamma)
+
+    action = bandit.take_best_action(mode = 'EXP3')
+    return action 
+    
+
+def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, gamma=0.01, gain_type='PG'):
+    bandit = Bandit(tasks = dataset.tasks, batch_size = batch_size)
+    for ep in range(1, num_episodes+1):
+
+        bandit.initialise_tasks()
+        print('-----------------------------------------------')
+        print(f"Starting episode {ep} ...")
+        print('-----------------------------------------------')
+
+        for t in range(1, num_timesteps+1):
+            action_t = bandit.take_best_action(t, c)
+            choice = np.random.choice([0,1], p = [1 - gamma, gamma])
+            #Exploration
+            if choice:
+                num_tasks = len(self.tasks)
+                uni_prob = [1/num_tasks for i in range(num_tasks)]
+                tasks = [i for i in range(num_tasks)]
+                action_t = np.random.choice(tasks, p = uni_prob)
+            #Choose the action returned by Hedge update
+            else:
+                action_t = Hedge(bandit = bandit, feedback = feedback, gamma = gamma, lr = lr)
+            #Constructing fake feedback
+            
+
+
+
+
+
 def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_type='PG'):
     '''
     Params:
@@ -201,7 +265,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
         losses = load_losses(init=True)        
         #reward = bandit.calc_reward(losses)
         reward = bandit.calc_raw_reward(losses)
-        bandit.update_qfunc(reward, i)
+        bandit.update_qfunc_UCB1(reward, i)
     
 
 
@@ -224,7 +288,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
         
         for t in range(1, num_timesteps+1):
             #Take best action, observe reward, update qfunc
-            action_t = bandit.take_best_action(t, c)         
+            action_t = bandit.take_best_action(timestep = t, c = c)         
             print(f"Playing action {action_t} on time step {t}...")
             bandit.action_hist.append(action_t)
             if action_t==-1:
@@ -240,7 +304,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
             losses = load_losses()
             reward = bandit.calc_raw_reward(losses)
             print('Current reward:', reward)
-            bandit.update_qfunc(reward, action_t)
+            bandit.update_qfunc_UCB1(reward, action_t)
             #Save histories to plot
             bandit.save_sc_rhist('sc_reward_hist.pickle')
             bandit.save_lhist('loss_hist.pickle')
