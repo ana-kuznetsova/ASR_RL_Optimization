@@ -194,7 +194,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
 
     for i in range(len(bandit.tasks)):
         batch = bandit.sample_task(i)
-        save_batch(batch)
+        save_batch(batch = batch, batch_filename = 'batch')
         create_model(i+1)
         losses = load_losses(init=True)        
         #reward = bandit.calc_reward(losses)
