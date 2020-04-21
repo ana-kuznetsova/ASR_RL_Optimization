@@ -102,9 +102,9 @@ class Bandit:
         self.reward_hist.append(L)
 
         #Save reward to the hist of cumulative scaled rewards
-        self.set_cummulative_r(r)
+        self.set_cummulative_r(L)
 
-        return r
+        return L
         
     def calc_reward(self, losses):
         '''
@@ -187,7 +187,8 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
         save_batch(batch)
         init_PG(i+1)
         losses = load_losses(init=True)        
-        reward = bandit.calc_reward(losses)
+        #reward = bandit.calc_reward(losses)
+        reward = bandit.calc_raw_reward(losses)
         bandit.update_qfunc(reward, i)
     
 
