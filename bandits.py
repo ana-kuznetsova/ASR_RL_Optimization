@@ -206,6 +206,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                 train_PG()
                 losses = load_losses()
                 reward = bandit.calc_reward(losses)
+                print('Current reward:', reward)
                 bandit.update_qfunc(reward, action_t)
                 
                 #Save histories to plot
