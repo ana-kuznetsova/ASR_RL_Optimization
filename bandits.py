@@ -87,14 +87,21 @@ class Bandit:
         Stores unscaled reward in reward_hist
         Saves loss hist to loss_hist
         '''
+
+        print('Loss array:', losses)
         L = losses[0]- losses[1]
 
+        print('L:', L)
+
         self.loss_hist.append(losses[1])
+        print('Loss hist:', self.loss_hist)
         self.reward_hist.append(L)
     
         ##Scale reward
         q_lo = np.ceil(np.quantile(self.reward_hist, 0.2))
+        print('Q Low:', q_lo)
         q_hi = np.ceil(np.quantile(self.reward_hist, 0.8))
+        print('Q High:', q_hi)
         
         if L < q_lo:
             r =  -1
