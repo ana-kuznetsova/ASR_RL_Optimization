@@ -67,7 +67,8 @@ def train_SPG(sample_it=0):
 
 def load_losses(init=False):
     if init:
-        L1 = 0
+        #Initialize losses with approximate loss values
+        L1 = int(np.random.randint(low=400, high=700, size=1))
     else: 
         with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_before.json') as f:
             loss_before = json.load(f)
