@@ -85,6 +85,8 @@ class Bandit:
         if len(self.sc_reward_hist):
             last_r = self.sc_reward_hist[-1]        
         self.sc_reward_hist.append(scaled_r + last_r)
+        max_reward = max(self.sc_reward_hist)
+        self.sc_reward_hist = [i/max_reward for i in self.sc_reward_hist]
 
     def calc_raw_reward(self, losses):
         '''
