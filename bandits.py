@@ -73,8 +73,7 @@ class Bandit:
 
     def set_cummulative_r(self, scaled_r):
         '''
-        Store cumulative scaled reward 
-        Per time step
+        Store cumulative scaled reward per time step
         '''
         last_r = 0
         if len(self.sc_reward_hist):
