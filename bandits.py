@@ -237,22 +237,3 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                 print('Current Q-function')
                 bandit.print_qfunc()
                 print('-----------------------------------------------')
-
-    ''' 
-    elif gain_type=='SPG':
-        
-        for t in range(num_episodes):
-            #Take best action, observe reward, update qfunc
-            action_t = bandit.take_best_action(t, c)         
-            print(f"Playing action {action_t} on time step {t}...")
-            print('-----------------------------------------------')
-            batch = bandit.sample_task(action_t)
-            save_batch(batch)
-            train_SPG(sample_it=0)
-            batch = bandit.sample_task(action_t)
-            save_batch(batch)
-            train_SPG(sample_it=0)
-            losses = load_losses()            
-            reward = bandit.calc_reward(losses)
-            bandit.update_qfunc(reward, action_t)  
-    '''      
