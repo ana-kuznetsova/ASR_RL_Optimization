@@ -48,7 +48,7 @@ class Bandit:
         else:
             self._qfunc[action]["val"] = self._qfunc[action]["r"]/self._qfunc[action]["a"]
 
-    def update_qfunc_EXP3(self, reward, gamma):
+    def update_qfunc_EXP3(self, gamma):
         '''
         The update function to be used for EXP3
         '''
@@ -200,12 +200,12 @@ class Bandit:
 def Hedge(bandit, feedback, gamma, lr = 0.05, init = False):
     sum_w = sum(bandit.W_exp3)
     p_t = bandit.W_exp3/sum_w
-   
-    losses = load_losses(init = init)  
-    reward = bandit.calc_reward(losses)
-    bandit.W_exp3 = bandit.W_exp3*((1+lr)**reward)
-    bandit.update_qfunc_EXP3(reward = reward, gamma = gamma)
-
+    num_tasks = len(self.tasks)
+    #Update weights and qfunc
+    for action in num_tasks: 
+        bandit.W_exp3[action] = bandit.W_exp3[action] * ((1+lr)**feedback[action])
+    bandit.update_qfunc_EXP3(gamma = gamma)
+    #Take best action
     action = bandit.take_best_action(mode = 'EXP3')
     return action 
     
@@ -231,8 +231,32 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, gamma
             #Choose the action returned by Hedge update
             else:
                 action_t = Hedge(bandit = bandit, feedback = feedback, gamma = gamma, lr = lr)
-            #Constructing fake feedback
-            
+            if action_t == -1:
+                break
+            batch = bandit.sample_task(action_t)
+            save_batch(current_batch = batch, batch_filename = 'batch')
+            if gain_type == 'PG':
+                train_PG()
+            if gain_type == 'SPG':
+                resampled_batch = bandit.resample_task(batch, action_t)
+                save_batch(current_batch = batch, batch_filename = 'resampled_batch')
+                train_SPG()
+            #Constructing fake feedback to feed Hedge
+            num_tasks = len(bandit.tasks)
+            losses = load_losses()
+            reward = bandit.calc_raw_reward(losses)
+            feedback = [reward/self.q_func[i]['val'] if i == action_t else 0 for i in range(num_tasks)]
+
+            print('Current reward:', reward)
+            #Save histories to plot
+            bandit.save_sc_rhist('sc_reward_hist_EXP3.pickle')
+            bandit.save_lhist('loss_hist_EXP3.pickle')
+            bandit.save_action_hist('action_hist_EXP3.pickle')
+            print('-----------------------------------------------')
+            print('Current Q-function')
+            bandit.print_qfunc()
+            print('-----------------------------------------------')
+
 
 
 
