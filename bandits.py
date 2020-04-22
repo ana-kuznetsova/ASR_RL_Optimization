@@ -48,17 +48,16 @@ class Bandit:
         else:
             self._qfunc[action]["val"] = self._qfunc[action]["r"]/self._qfunc[action]["a"]
 
-    def update_qfunc_EXP3(self, gamma):
+    def update_qfunc_EXP3(self, c=0.01):
         '''
         The update function to be used for EXP3
         '''
-        #probabilities of weights
         sum_w = sum(self.W_exp3)
-        p = np.exp(self.W_exp3)/sum(np.exp(self.W_exp3))
+        p_t = np.exp(self.W_exp3)/sum(np.exp(self.W_exp3))
         #Number of tasks
         num_tasks = len(self.tasks)
         for action in self._qfunc:
-            self._qfunc[action]['val'] = gamma*(1/num_tasks) + (1-gamma)*p[action]
+            self._qfunc[action]['val'] = c*(1/num_tasks) + (1-c)*p_t[action]
    
     def print_qfunc(self):
         print(self._qfunc)
@@ -69,7 +68,6 @@ class Bandit:
         to move checkpoint for the main model
         '''
         action_vals = [self._qfunc[action]['val'] for action in self._qfunc]
-
         return int(np.argmax(action_vals))
 
     def take_best_action(self, mode, c=0.01, time_step=None):
@@ -176,7 +174,7 @@ class Bandit:
         self.stored_tasks = [[i for i in row] for row in self.tasks]
         self.empty_tasks = [False for task in self.tasks]
 
-def Hedge(bandit, feedback, gamma, lr = 0.05, init = False):
+def Hedge(bandit, feedback, c=0.01, lr = 0.05, init = False):
     sum_w = sum(bandit.W_exp3)
     p_t =  p = np.exp(bandit.W_exp3)/sum(np.exp(bandit.W_exp3))
     num_tasks = len(bandit.tasks)
@@ -189,7 +187,7 @@ def Hedge(bandit, feedback, gamma, lr = 0.05, init = False):
     return action 
     
 
-def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, gamma=0.01, gain_type='PG'):
+def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, c=0.01, gain_type='PG'):
     bandit = Bandit(tasks = dataset.tasks, batch_size = batch_size)
 
     ##### Initialization ######
