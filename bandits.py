@@ -59,10 +59,7 @@ class Bandit:
         num_tasks = len(self.tasks)
         for action in self._qfunc:
             self._qfunc[action]['val'] = gamma*(1/num_tasks) + (1-gamma)*p[action]
-
-
-
-        
+   
     def print_qfunc(self):
         print(self._qfunc)
 
@@ -181,7 +178,6 @@ class Bandit:
             batch = np.random.choice(self.stored_tasks[task_ind], self.batch_size, replace = False)
             self.stored_tasks[task_ind] = np.array([row for row in self.stored_tasks[task_ind] if row not in batch])
             return batch
-
     
     def resample_task(self, batch, task_ind):
         '''
@@ -345,9 +341,9 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
             print('Current reward:', reward)
             bandit.update_qfunc_UCB1(reward, action_t)
             #Save histories to plot
-            bandit.save_sc_rhist('sc_reward_hist.pickle')
-            bandit.save_lhist('loss_hist.pickle')
-            bandit.save_action_hist('action_hist.pickle')
+            bandit.save_sc_rhist('sc_reward_hist_UCB1.pickle')
+            bandit.save_lhist('loss_hist_UCB1.pickle')
+            bandit.save_action_hist('action_hist_UCB1.pickle')
             print('-----------------------------------------------')
             print('Current Q-function')
             bandit.print_qfunc()
