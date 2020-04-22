@@ -72,21 +72,27 @@ class Bandit:
 
     def take_best_action(self, mode, c=0.01, time_step=None):
         action_vals = []
+        best = -1
         if mode == 'UCB1':
             for action in self._qfunc:
                 q = self._qfunc[action]['val'] + c*np.sqrt((np.log(time_step)/self._qfunc[action]["a"]))
                 action_vals.append((q,action))
-        
+            #Store only those actions which have non empty tasks. 
+            #To preserve action index we store a tuple of (q_func value, action index) in action vals.
+            action_vals = [tup for tup in action_vals if not self.empty_tasks[tup[1]]]
+            if len(action_vals) == 0:
+                return -1 
+            action_vals = sorted(action_vals)
+            best = action_vals[-1][1]
+    
         if mode == 'EXP3':
-            for action in self._qfunc:
-                action_vals.append((q,action))    
-        #Store only those actions which have non empty tasks. 
-        #To preserve action index we store a tuple of (q_func value, action index) in action vals.
-        action_vals = [tup for tup in action_vals if not self.empty_tasks[tup[1]]]
-        if len(action_vals) == 0:
-            return -1 
-        action_vals = sorted(action_vals)
-        best = action_vals[-1][1]
+            #Storing all non empty tasks and choosing the best of them
+            tasks = [i for i in range(len(self.tasks)) if not self.empty_tasks[i]]
+            #Probabilities of all chosen tasks
+            w = [self.W_exp3[i] for i in tasks]
+            sum_w = sum(w)
+            p_t = [i/sum_w for i in w]
+            best = np.random.choice(tasks, 1, p = p_t)   
         return best
         
     def erase_rhist(self):
@@ -174,22 +180,21 @@ class Bandit:
         self.stored_tasks = [[i for i in row] for row in self.tasks]
         self.empty_tasks = [False for task in self.tasks]
 
-def Hedge(bandit, feedback, c=0.01, lr = 0.05, init = False):
+def Hedge(bandit, feedback, timestep, c=0.01, lr = 0.05, init = False):
     sum_w = sum(bandit.W_exp3)
     p_t =  p = np.exp(bandit.W_exp3)/sum(np.exp(bandit.W_exp3))
     num_tasks = len(bandit.tasks)
     #Update weights and qfunc
     for action in num_tasks: 
         bandit.W_exp3[action] = bandit.W_exp3[action] * ((1+lr)**feedback[action])
-    bandit.update_qfunc_EXP3(gamma = gamma)
+    bandit.update_qfunc_EXP3(c = c)
     #Take best action
-    action = bandit.take_best_action(mode = 'EXP3')
+    action = bandit.take_best_action(timestep = timestep, mode = 'EXP3', c = c)
     return action 
     
 
 def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, c=0.01, gain_type='PG'):
     bandit = Bandit(tasks = dataset.tasks, batch_size = batch_size)
-
     ##### Initialization ######
     #Play each of the arms once, observe the reward
     for i in range(len(bandit.tasks)):
@@ -208,23 +213,21 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, c=0.0
     #Move best action model to the main model ckpt dir
     initialise_model(init_action)
     for ep in range(1, num_episodes+1):
-
         bandit.initialise_tasks()
         print('-----------------------------------------------')
         print(f"Starting episode {ep} ...")
         print('-----------------------------------------------')
-
         for t in range(1, num_timesteps+1):
-            choice = np.random.choice([0,1], p = [1 - gamma, gamma])
+            choice = np.random.choice([0,1], 1, p = [1 - c, c])
             #Exploration
             if choice:
                 num_tasks = len(bandit.tasks)
                 uni_prob = [1/num_tasks for i in range(num_tasks)]
                 tasks = [i for i in range(num_tasks)]
-                action_t = np.random.choice(tasks, p = uni_prob)
+                action_t = np.random.choice(tasks, 1, p = uni_prob)
             #Choose the action returned by Hedge update
             else:
-                action_t = Hedge(bandit = bandit, feedback = feedback, gamma = gamma, lr = lr)
+                action_t = Hedge(bandit = bandit, feedback = feedback, timestep = t, c = c, lr = lr)
             if action_t == -1:
                 break
             batch = bandit.sample_task(action_t)
@@ -252,7 +255,6 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, c=0.0
             print('Current Q-function')
             bandit.print_qfunc()
             print('-----------------------------------------------')
-
 
 def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_type='PG'):
     '''
@@ -293,7 +295,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
         print('-----------------------------------------------')
         for t in range(1, num_timesteps+1):
             #Take best action, observe reward, update qfunc
-            action_t = bandit.take_best_action(timestep = t, c = c)         
+            action_t = bandit.take_best_action(timestep = t, c = c, mode = 'UCB1')         
             print(f"Playing action {action_t} on time step {t}...")
             bandit.action_hist.append(action_t)
             if action_t==-1:
