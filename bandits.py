@@ -52,7 +52,6 @@ class Bandit:
         '''
         The update function to be used for EXP3
         '''
-        sum_w = sum(self.W_exp3)
         p_t = np.exp(self.W_exp3)/sum(np.exp(self.W_exp3))
         #Number of tasks
         num_tasks = len(self.tasks)
@@ -86,15 +85,15 @@ class Bandit:
             best = action_vals[-1][1]
     
         if mode == 'EXP3':
-            #Storing all non empty tasks and choosing the best of them
+            #Storing all non empty tasks and sampling from them
             tasks = [i for i in range(len(self.tasks)) if not self.empty_tasks[i]]
             if len(tasks) == 0:
                 return -1
             #Probabilities of all chosen tasks
-            w = [self.W_exp3[i] for i in tasks]
+            w = [np.exp(self.W_exp3[i]) for i in tasks]
             sum_w = sum(w)
             p_t = [i/sum_w for i in w]
-            best = np.random.choice(tasks, 1, p = p_t)[0]   
+            best = int(np.random.choice(tasks, 1, p = p_t))  
         return best
         
     def erase_rhist(self):
@@ -183,15 +182,13 @@ class Bandit:
         self.empty_tasks = [False for task in self.tasks]
 
 def Hedge(bandit, feedback, timestep, c=0.01, lr = 0.05, init = False):
-    sum_w = sum(bandit.W_exp3)
-    p_t =  p = np.exp(bandit.W_exp3)/sum(np.exp(bandit.W_exp3))
     num_tasks = len(bandit.tasks)
+    #Take best action
+    action = bandit.take_best_action(mode = 'EXP3', c = c, timestep = timestep)
     #Update weights and qfunc
     for action in num_tasks: 
         bandit.W_exp3[action] = bandit.W_exp3[action] * ((1+lr)**feedback[action])
     bandit.update_qfunc_EXP3(c = c)
-    #Take best action
-    action = bandit.take_best_action(mode = 'EXP3', c = c, timestep = timestep)
     return action 
     
 
@@ -205,7 +202,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, c=0.0
         create_model(i+1)
         losses = load_losses(init=True)        
         reward = bandit.calc_reward(losses)
-        bandit.update_qfunc_EXP3(reward, i)
+        bandit.update_qfunc_EXP3(c = c)
     '''
     At this point we generated initial losses.
     Now pick up the best action and load the model for the best action
@@ -247,7 +244,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, c=0.0
             if bandit.q_func[i]['val'] > 0:
                 feedback = [reward/bandit.q_func[i]['val'] if i == action_t else 0 for i in range(num_tasks)]
             else:
-                feedback = [1 if i == action_t else 0 for i in range(num_tasks)]
+                feedback = [reward if i == action_t else 0 for i in range(num_tasks)]
             print('Current reward:', reward)
             #Save histories to plot
             bandit.save_sc_rhist('sc_reward_hist_EXP3.pickle')
