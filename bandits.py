@@ -93,7 +93,7 @@ class Bandit:
             w = [np.exp(self.W_exp3[i]) for i in tasks]
             sum_w = sum(w)
             p_t = [i/sum_w for i in w]
-            best = int(np.random.choice(tasks, 1, p = p_t))  
+            best = np.random.choice(tasks, 1, p = p_t)[0]  
         return best
         
     def erase_rhist(self):
@@ -196,6 +196,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, c=0.0
     bandit = Bandit(tasks = dataset.tasks, batch_size = batch_size)
     ##### Initialization ######
     #Play each of the arms once, observe the reward
+    '''
     for i in range(len(bandit.tasks)):
         batch = bandit.sample_task(i)
         save_batch(current_batch = batch, batch_filename = 'batch')
@@ -203,6 +204,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, c=0.0
         losses = load_losses(init=True)        
         reward = bandit.calc_reward(losses)
         bandit.update_qfunc_EXP3(c = c)
+    '''
     '''
     At this point we generated initial losses.
     Now pick up the best action and load the model for the best action
