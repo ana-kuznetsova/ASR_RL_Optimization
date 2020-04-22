@@ -225,7 +225,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, c=0.0
                 num_tasks = len(bandit.tasks)
                 uni_prob = [1/num_tasks for i in range(num_tasks)]
                 tasks = [i for i in range(num_tasks)]
-                action_t = np.random.choice(tasks, 1, p = uni_prob)
+                action_t = np.random.choice(tasks, 1, p = uni_prob)[0]
             #Choose the action returned by Hedge update
             else:
                 action_t = Hedge(bandit = bandit, feedback = feedback, time_step = t, c = c, lr = lr)
