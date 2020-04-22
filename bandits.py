@@ -243,8 +243,8 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, c=0.0
             num_tasks = len(bandit.tasks)
             losses = load_losses()
             reward = bandit.calc_reward(losses)
-            if bandit.q_func[i]['val'] > 0:
-                feedback = [reward/bandit.q_func[i]['val'] if i == action_t else 0 for i in range(num_tasks)]
+            if bandit._qfunc[i]['val'] > 0:
+                feedback = [reward/bandit._qfunc[i]['val'] if i == action_t else 0 for i in range(num_tasks)]
             else:
                 feedback = [reward if i == action_t else 0 for i in range(num_tasks)]
             print('Current reward:', reward)
