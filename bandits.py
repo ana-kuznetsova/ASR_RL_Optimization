@@ -88,11 +88,13 @@ class Bandit:
         if mode == 'EXP3':
             #Storing all non empty tasks and choosing the best of them
             tasks = [i for i in range(len(self.tasks)) if not self.empty_tasks[i]]
+            if len(tasks) == 0:
+                return -1
             #Probabilities of all chosen tasks
             w = [self.W_exp3[i] for i in tasks]
             sum_w = sum(w)
             p_t = [i/sum_w for i in w]
-            best = np.random.choice(tasks, 1, p = p_t)   
+            best = np.random.choice(tasks, 1, p = p_t)[0]   
         return best
         
     def erase_rhist(self):
