@@ -219,7 +219,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, c=0.0
         print(f"Starting episode {ep} ...")
         print('-----------------------------------------------')
         for t in range(1, num_timesteps+1):
-            choice = np.random.choice([0,1], 1, p = [1 - c, c])
+            choice = np.random.choice([0,1], 1, p = [1 - c, c])[0]
             #Exploration
             if choice:
                 num_tasks = len(bandit.tasks)
