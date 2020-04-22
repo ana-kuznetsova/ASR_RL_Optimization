@@ -181,10 +181,10 @@ class Bandit:
         self.stored_tasks = [[i for i in row] for row in self.tasks]
         self.empty_tasks = [False for task in self.tasks]
 
-def Hedge(bandit, feedback, timestep, c=0.01, lr = 0.05, init = False):
+def Hedge(bandit, feedback, time_step, c=0.01, lr = 0.05, init = False):
     num_tasks = len(bandit.tasks)
     #Take best action
-    action = bandit.take_best_action(mode = 'EXP3', c = c, timestep = timestep)
+    action = bandit.take_best_action(mode = 'EXP3', c = c, time_step = time_step)
     #Update weights and qfunc
     for action in num_tasks: 
         bandit.W_exp3[action] = bandit.W_exp3[action] * ((1+lr)**feedback[action])
@@ -226,7 +226,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, c=0.0
                 action_t = np.random.choice(tasks, 1, p = uni_prob)
             #Choose the action returned by Hedge update
             else:
-                action_t = Hedge(bandit = bandit, feedback = feedback, timestep = t, c = c, lr = lr)
+                action_t = Hedge(bandit = bandit, feedback = feedback, time_step = t, c = c, lr = lr)
             if action_t == -1:
                 break
             batch = bandit.sample_task(action_t)
@@ -294,7 +294,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
         print('-----------------------------------------------')
         for t in range(1, num_timesteps+1):
             #Take best action, observe reward, update qfunc
-            action_t = bandit.take_best_action(timestep = t, c = c, mode = 'UCB1')         
+            action_t = bandit.take_best_action(time_step = t, c = c, mode = 'UCB1')         
             print(f"Playing action {action_t} on time step {t}...")
             bandit.action_hist.append(action_t)
             if action_t==-1:
