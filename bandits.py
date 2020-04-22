@@ -186,7 +186,7 @@ def Hedge(bandit, feedback, time_step, c=0.01, lr = 0.05, init = False):
     #Take best action
     action = bandit.take_best_action(mode = 'EXP3', c = c, time_step = time_step)
     #Update weights and qfunc
-    for action in num_tasks: 
+    for action in range(num_tasks): 
         bandit.W_exp3[action] = bandit.W_exp3[action] * ((1+lr)**feedback[action])
     bandit.update_qfunc_EXP3(c = c)
     return action 
