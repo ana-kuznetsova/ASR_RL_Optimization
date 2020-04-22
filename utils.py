@@ -56,19 +56,6 @@ def train_SPG():
 
  
 
-
-'''
-def train_SPG(sample_it=0):
-
-    os. system('cd /N/u/anakuzne/Carbonate/curr_learning/ASR_RL_Optimization/')
-
-    if sample_it==0:
-        os.system('tt_train_spg1.script')
-    elif sample_it==1:
-        os.system('tt_train_spg1.script')   
-'''
-
-
 def load_losses(init=False):
     if init:
         #Initialize losses with approximate loss values
