@@ -22,6 +22,8 @@ Args:
     c=0.01, 
     gain_type='SPG'
     python main.py --df_path='tt_train_with_scores.csv' --num_tasks=3 --csv='train.csv' --num_episodes=1 --batch_size=64 --gain_type='PG' --c 0.5
+    python main.py --mode='EXP3' --df_path='tt_train_with_scores.csv' --num_tasks=3 --csv='train.csv' --num_episodes=1 --batch_size=64 --gain_type='PG' --c 0.1 --lr 0.01 
+
 '''
 
 def main(args):
@@ -46,7 +48,7 @@ def main(args):
     elif args.mode=='EXP3':
 
         print('Starting EXP3...')
-        EXP3(data, df, args.num_episodes, num_timesteps, args.batch_size, args.lr, args.c, args.gain_type):
+        EXP3(data, df, args.num_episodes, num_timesteps, args.batch_size, args.lr, args.c, args.gain_type)
 
 
 if __name__ == '__main__':
