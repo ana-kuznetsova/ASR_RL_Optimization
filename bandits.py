@@ -189,7 +189,7 @@ def Hedge(bandit, feedback, timestep, c=0.01, lr = 0.05, init = False):
         bandit.W_exp3[action] = bandit.W_exp3[action] * ((1+lr)**feedback[action])
     bandit.update_qfunc_EXP3(c = c)
     #Take best action
-    action = bandit.take_best_action(timestep = timestep, mode = 'EXP3', c = c)
+    action = bandit.take_best_action(mode = 'EXP3', c = c, timestep = timestep)
     return action 
     
 
@@ -209,7 +209,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, c=0.0
     Now pick up the best action and load the model for the best action
     '''
     init_action = bandit.take_greedy_action()
-    feedback = [1 if i == init_action else 0 for i in range(len(bandit.tasks)]
+    feedback = [1 if i == init_action else 0 for i in range(len(bandit.tasks))]
     #Move best action model to the main model ckpt dir
     initialise_model(init_action)
     for ep in range(1, num_episodes+1):
