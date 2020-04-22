@@ -85,13 +85,10 @@ class Bandit:
         #Store only those actions which have non empty tasks. 
         #To preserve action index we store a tuple of (q_func value, action index) in action vals.
         action_vals = [tup for tup in action_vals if not self.empty_tasks[tup[1]]]
-
         if len(action_vals) == 0:
             return -1 
-
         action_vals = sorted(action_vals)
         best = action_vals[-1][1]
-    
         return best
         
     def erase_rhist(self):
@@ -112,19 +109,14 @@ class Bandit:
         '''
         Returns raw reward without rescaling
         '''
-
         print('Loss array:', losses)
         L = losses[0]- losses[1]
-
         print('L:', L)
-
         self.loss_hist.append(losses[1])
         print('Loss hist:', self.loss_hist)
         self.reward_hist.append(L)
-
         #Save reward to the hist of cumulative scaled rewards
         self.set_cummulative_r(L)
-
         return L
         
     def calc_reward(self, losses):
@@ -133,22 +125,17 @@ class Bandit:
         Stores unscaled reward in reward_hist
         Saves loss hist to loss_hist
         '''
-
         print('Loss array:', losses)
         L = losses[0]- losses[1]
-
         print('L:', L)
-
         self.loss_hist.append(losses[1])
         print('Loss hist:', self.loss_hist)
         self.reward_hist.append(L)
-    
         ##Scale reward
         q_lo = np.ceil(np.quantile(self.reward_hist, 0.2))
         print('Q Low:', q_lo)
         q_hi = np.ceil(np.quantile(self.reward_hist, 0.8))
         print('Q High:', q_hi)
-        
         if L < q_lo:
             r =  -1
         elif L > q_hi:
@@ -158,22 +145,18 @@ class Bandit:
                 r = (2*(L-q_lo))/(((q_hi-q_lo)-1)+0.0000000000001)
             else:
                 r = (2*(L-q_lo))/((q_hi-q_lo)-1)
-
         #Save reward to the hist of cumulative scaled rewards
         self.set_cummulative_r(r)
-
         return r
         
     def sample_task(self, task_ind):
         if len(self.stored_tasks[task_ind]) == 0:
             return self.stored_tasks[task_ind]
-
         if len(self.stored_tasks[task_ind]) < self.batch_size:
             batch = self.stored_tasks[task_ind]
             self.stored_tasks[task_ind] = np.array([])
             self.empty_tasks[task_ind] = True
             return batch
-
         if len(self.stored_tasks[task_ind]) >= self.batch_size:
             batch = np.random.choice(self.stored_tasks[task_ind], self.batch_size, replace = False)
             self.stored_tasks[task_ind] = np.array([row for row in self.stored_tasks[task_ind] if row not in batch])
@@ -285,14 +268,10 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
         c (float): exploration rate
         gain_type (str): progress gain
     '''
-    
     #Initialize bandit, save past actions, save past rewards
     bandit = Bandit(tasks = dataset.tasks, batch_size = batch_size)
-  
-    
     ##### Initialization ######
     #Play each of the arms once, observe the reward
-
     for i in range(len(bandit.tasks)):
         batch = bandit.sample_task(i)
         save_batch(current_batch = batch, batch_filename = 'batch')
@@ -301,26 +280,19 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
         #reward = bandit.calc_reward(losses)
         reward = bandit.calc_raw_reward(losses)
         bandit.update_qfunc_UCB1(reward, i)
-    
-
-
     '''
     At this point we generated initial losses.
     Now pick up the best action and load the model for the best action
     '''
-
     init_action = bandit.take_greedy_action()
     #Move best action model to the main model ckpt dir
     initialise_model(init_action)
-
     #Start training from that checkpoint
     for ep in range(1, num_episodes+1):
-
         bandit.initialise_tasks()
         print('-----------------------------------------------')
         print(f"Starting episode {ep} ...")
         print('-----------------------------------------------')
-        
         for t in range(1, num_timesteps+1):
             #Take best action, observe reward, update qfunc
             action_t = bandit.take_best_action(timestep = t, c = c)         
