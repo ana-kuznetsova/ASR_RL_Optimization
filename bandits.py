@@ -109,6 +109,17 @@ class Bandit:
         self.sc_reward_hist.append(scaled_r + last_r)
         #max_reward = max(self.sc_reward_hist)
         #self.sc_reward_hist = [i/max_reward for i in self.sc_reward_hist]
+    
+    def set_avg_r(self, scaled_r):
+        '''
+        Store average scaled reward per time step
+        for EXP3 use
+        '''
+        avg_r = 0
+        if len(self.sc_reward_hist):
+            avg_r = (sum(self.sc_reward_hist) + scaled_r)/(len(self.sc_reward_hist)+1)
+              
+        self.sc_reward_hist.append(avg_r)
 
     def calc_raw_reward(self, losses):
         '''
@@ -151,7 +162,8 @@ class Bandit:
             else:
                 r = (2*(L-q_lo))/((q_hi-q_lo)-1)
         #Save reward to the hist of cumulative scaled rewards
-        self.set_cummulative_r(r)
+        #self.set_cummulative_r(r)
+        self.set_avg_r(r)
         return r
         
     def sample_task(self, task_ind):
