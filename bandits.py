@@ -251,7 +251,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, c=0.0
                 train_PG()
             if gain_type == 'SPG':
                 resampled_batch = bandit.resample_task(batch, action_t)
-                save_batch(current_batch = batch, batch_filename = 'resampled_batch')
+                save_batch(current_batch = resampled_batch, batch_filename = 'resampled_batch')
                 train_SPG()
             #Constructing fake feedback to feed Hedge
             num_tasks = len(bandit.tasks)
@@ -321,7 +321,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                 train_PG()
             if gain_type == 'SPG':
                 resampled_batch = bandit.resample_task(batch, action_t)
-                save_batch(current_batch = batch, batch_filename = 'resampled_batch')
+                save_batch(current_batch = resampled_batch, batch_filename = 'resampled_batch')
                 train_SPG()
             losses = load_losses()
             reward = bandit.calc_raw_reward(losses)
