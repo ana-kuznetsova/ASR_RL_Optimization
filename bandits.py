@@ -115,11 +115,20 @@ class Bandit:
         Store average scaled reward per time step
         for EXP3 use
         '''
+        '''
         avg_r = 0
+        last_r = 
         if len(self.sc_reward_hist):
-            avg_r = (sum(self.sc_reward_hist) + scaled_r)/(len(self.sc_reward_hist)+1)
-              
+            avg_r = (sum(self.sc_reward_hist) + scaled_r)/(len(self.sc_reward_hist)+1)      
         self.sc_reward_hist.append(avg_r)
+        '''
+        last_r = 0
+        reward_hist_len = len(self.sc_reward_hist)
+        if reward_hist_len > 0:
+            last_r = self.sc_reward_hist[-1]
+        reward_so_far = last_r * reward_hist_len
+        avg_r = (reward_so_far + scaled_r)/(reward_hist_len + 1)
+        self.sc_reward_hist.append(avg_r)     
 
     def calc_raw_reward(self, losses):
         '''
