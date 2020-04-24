@@ -165,7 +165,7 @@ class Bandit:
         #self.set_cummulative_r(r)
         self.set_avg_r(r)
         return r
-        
+
     def sample_task(self, task_ind):
         if len(self.stored_tasks[task_ind]) == 0:
             return self.stored_tasks[task_ind]
@@ -203,27 +203,9 @@ def Hedge(bandit, feedback, time_step, c=0.01, lr = 0.05, init = False):
         bandit.W_exp3[action] = bandit.W_exp3[action] * ((1+lr)**feedback[action])
     bandit.update_qfunc_EXP3(c = c)
     return action 
-    
 
 def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, c=0.01, gain_type='PG'):
     bandit = Bandit(tasks = dataset.tasks, batch_size = batch_size)
-    ##### Initialization ######
-    #Play each of the arms once, observe the reward
-    '''
-    for i in range(len(bandit.tasks)):
-        batch = bandit.sample_task(i)
-        save_batch(current_batch = batch, batch_filename = 'batch')
-        create_model(i+1)
-        losses = load_losses(init=True)        
-        reward = bandit.calc_reward(losses)
-        bandit.update_qfunc_EXP3(c = c)
-    
-    init_action = bandit.take_greedy_action()
-    feedback = [1 if i == init_action else 0 for i in range(len(bandit.tasks))]
-    #Move best action model to the main model ckpt dir
-    initialise_model(init_action)
-    '''
-
     #Initialize feedback with zeros or small positive values for optimistic initialization
     feedback = [0 for i in range(len(bandit.tasks))]
 
