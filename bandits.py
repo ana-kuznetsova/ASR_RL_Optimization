@@ -115,20 +115,11 @@ class Bandit:
         Store average scaled reward per time step
         for EXP3 use
         '''
-        '''
         avg_r = 0
-        last_r = 
         if len(self.sc_reward_hist):
-            avg_r = (sum(self.sc_reward_hist) + scaled_r)/(len(self.sc_reward_hist)+1)      
+            avg_r = (sum(self.sc_reward_hist) + scaled_r)/(len(self.sc_reward_hist)+1)
+              
         self.sc_reward_hist.append(avg_r)
-        '''
-        last_r = 0
-        reward_hist_len = len(self.sc_reward_hist)
-        if reward_hist_len > 0:
-            last_r = self.sc_reward_hist[-1]
-        reward_so_far = last_r * reward_hist_len
-        avg_r = (reward_so_far + scaled_r)/(reward_hist_len + 1)
-        self.sc_reward_hist.append(avg_r)     
 
     def calc_raw_reward(self, losses):
         '''
@@ -217,7 +208,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, c=0.0
     bandit = Bandit(tasks = dataset.tasks, batch_size = batch_size)
     ##### Initialization ######
     #Play each of the arms once, observe the reward
-    
+    '''
     for i in range(len(bandit.tasks)):
         batch = bandit.sample_task(i)
         save_batch(current_batch = batch, batch_filename = 'batch')
@@ -226,14 +217,15 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, c=0.0
         reward = bandit.calc_reward(losses)
         bandit.update_qfunc_EXP3(c = c)
     
-    '''
-    At this point we generated initial losses.
-    Now pick up the best action and load the model for the best action
-    '''
     init_action = bandit.take_greedy_action()
     feedback = [1 if i == init_action else 0 for i in range(len(bandit.tasks))]
     #Move best action model to the main model ckpt dir
     initialise_model(init_action)
+    '''
+
+    #Initialize feedback with zeros or small positive values for optimistic initialization
+    feedback = [0 for i in range(len(bandit.tasks))]
+
     for ep in range(1, num_episodes+1):
         bandit.initialise_tasks()
         print('-----------------------------------------------')
