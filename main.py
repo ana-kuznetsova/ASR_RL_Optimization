@@ -61,7 +61,5 @@ if __name__ == '__main__':
     parser.add_argument('--c', type=float, help='Exploration rate')
     parser.add_argument('--gain_type', type=str, help='Gain type (Prediction Gain, Self-Prediction Gain)', required=True)
     parser.add_argument('--mode', type=str, help='Algorithms to run', required=True)
-    parser.add_argument('--lr', type=float, help='Learning rate')
-
     args = parser.parse_args()
     main(args)
