@@ -193,6 +193,7 @@ class Bandit:
         self.stored_tasks = [[i for i in row] for row in self.tasks]
         self.empty_tasks = [False for task in self.tasks]
 
+
 def Hedge(bandit, feedback, time_step, c=0.01, lr = 0.05, init = False):
     num_tasks = len(bandit.tasks)
     #Take best action
