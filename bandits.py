@@ -291,12 +291,12 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
             batch = bandit.sample_task(action_t)
             save_batch(current_batch = batch, batch_filename = 'batch')
             if gain_type == 'PG':
-                train_PG()
+                train_PG(mode='UCB1')
             if gain_type == 'SPG':
                 resampled_batch = bandit.resample_task(batch, action_t)
                 save_batch(current_batch = resampled_batch, batch_filename = 'resampled_batch')
-                train_SPG()
-            losses = load_losses()
+                train_SPG(mode='UCB1')
+            losses = load_losses(mode='UCB1')
             reward = bandit.calc_raw_reward(losses)
             print('Current reward:', reward)
             bandit.update_qfunc_UCB1(reward, action_t)
