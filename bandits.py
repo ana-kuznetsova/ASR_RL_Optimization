@@ -250,7 +250,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
             'Might want to look if the reward below is in the range [0,1]!!'
             reward = bandit.calc_reward(losses, mode = 'EXP3')
             #Update weights
-            p_t = p_t = (1 - c) * (bandit.W_exp3/sum(bandit.W_exp3)) + c/bandit.num_tasks 
+            p_t = (1 - c) * (bandit.W_exp3/sum(bandit.W_exp3)) + c/bandit.num_tasks 
             #Reward Mapping!!!!!!!!!!!aaaaaaaaaah
             feedback = [reward/p_t[i] if i == action_t else 0 for i in range(bandit.num_tasks)]
             for i in range(bandit.num_tasks):
