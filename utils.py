@@ -61,7 +61,7 @@ def train_SPG(mode):
     elif mode=='EXP3':
         os.system('bash scripts/tt_train_spg_exp3.sh') 
 
-def load_losses(init=False, mode):
+def load_losses(init=False, mode='UCB1'):
     if mode == 'UCB1':
         if init:
             #Initialize losses with approximate loss values
