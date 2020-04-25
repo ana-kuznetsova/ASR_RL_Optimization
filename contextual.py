@@ -105,41 +105,6 @@ def sample_task(self, task_ind, replace=False):
             return False
 
 
-def get_feedback(context_vector, action, bandit):
-    #Sample batch on action with replacement
-    batch = bandit.sample_task(action, replace=True)
-    #Save batch for training
-    save_batch(batch, 'batch_feed')
-    #Start training from the latest model
-    train_feed()
-    L1 = bandit.loss_hist[-1]
-    L2 = load_losses_lin(feed=True)
-    f = bandit.calc_raw_reward(feed=True)
-    return f
-
-
-
-
-
-
-
-def get_feedback(D_a, curr_action, bandit):
-    '''
-    Calculates the feedback (gain) for each context of a_t
-    D_a (array): feature matrix for action a_t
-    '''
-    feedback = []
-    prev_actions = D_a[:,0]
-    for prev in prev_actions:
-        ##sample batch from the previous action
-        prev_batch = bandit.sample_task(prev, replace=True)
-        
-        ##train on prev_batch, get L1, save ckpt
-        #train on current action from the prev_batch model, Get L2
-        #Clean up ckpt dir
-        #Store in feedback
-        pass  
-
 
 def LinUCB(dataset, csv, num_episodes, num_timesteps, batch_size, gain_type='PG'):
     dim = 6
