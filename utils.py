@@ -5,6 +5,18 @@ import json
 import shutil
 
 
+def delete_files(folder):
+        for filename in os.listdir(folder): 
+            file_path = os.path.join(folder, filename) 
+            try: 
+                if os.path.isfile(file_path) or os.path.islink(file_path): 
+                    os.unlink(file_path) 
+                elif os.path.isdir(file_path): 
+                    shutil.rmtree(file_path) 
+            except Exception as e:
+                print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+
 def clear_dirs():
     '''
     Cleans up directories before the next training
@@ -85,3 +97,31 @@ def load_losses(init=False, mode='UCB1'):
             loss_after = json.load(f)
         L2 = sum([l['loss'] for l in loss_after])/len(loss_after)
     return [L1, L2]
+
+
+######## Utils for LinUCB #########
+def train_feed():
+    #Clean up dir
+    feed_model_path = '/N/slate/anakuzne/tt_ckpt_automated_curr/feed_model'
+    delete_files(feed_model_path)
+    #Copy main model to the ckpt dir
+    main_model_lin = '/N/slate/anakuzne/tt_ckpt_automated_curr/main_model_lin/* '
+    os.system('cp -r ' + main_model_lin + feed_model_path)
+    os.system('bash train_linUCB_feed.sh')
+
+
+def load_losses_lin(feed=True):
+    if feed:
+        with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_after_feed.json') as f:
+            loss_after = json.load(f)
+        L2 = sum([l['loss'] for l in loss_after])/len(loss_after)
+        return L2
+    else:
+        with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_before_lin.json') as f:
+            loss_before = json.load(f)
+        L1 = sum([l['loss'] for l in loss_before])/len(loss_before)
+        
+        with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_after_lin.json') as f:
+            loss_after = json.load(f)
+        L2 = sum([l['loss'] for l in loss_after])/len(loss_after)
+    return [L1, L2]        
