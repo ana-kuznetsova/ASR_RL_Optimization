@@ -47,16 +47,6 @@ class Bandit:
             self._qfunc[action]["val"] = self._qfunc[action]["r"]/(self._qfunc[action]["a"]+0.000000001)
         else:
             self._qfunc[action]["val"] = self._qfunc[action]["r"]/self._qfunc[action]["a"]
-
-    def update_qfunc_EXP3(self, c=0.01):
-        '''
-        The update function to be used for EXP3
-        '''
-        p_t = np.exp(self.W_exp3)/sum(np.exp(self.W_exp3))
-        #Number of tasks
-        num_tasks = len(self.tasks)
-        for action in self._qfunc:
-            self._qfunc[action]['val'] = c*(1/num_tasks) + (1-c)*p_t[action]
    
     def print_qfunc(self):
         print(self._qfunc)
@@ -90,9 +80,10 @@ class Bandit:
             if len(tasks) == 0:
                 return -1
             #Probabilities of all chosen tasks
-            w = [np.exp(self.W_exp3[i]) for i in tasks]
+            w = [self.W_exp3[i] for i in tasks]
             sum_w = sum(w)
-            p_t = [i/sum_w for i in w]
+            num_tasks = len(tasks)
+            p_t = (1 - c) * [i/sum_w for i in w] + c/num_tasks 
             best = np.random.choice(tasks, 1, p = p_t)[0]  
         return best
         
@@ -123,8 +114,6 @@ class Bandit:
         avg_r = (reward_so_far + scaled_r)/(1 + rhist_len)    
         self.sc_reward_hist.append(avg_r)
 
-
-
     def calc_raw_reward(self, losses):
         '''
         Returns raw reward without rescaling
@@ -139,7 +128,7 @@ class Bandit:
         self.set_cummulative_r(L)
         return L
         
-    def calc_reward(self, losses):
+    def calc_reward(self, losses, mode):
         '''
         Rescales reward
         Stores unscaled reward in reward_hist
@@ -157,7 +146,10 @@ class Bandit:
         q_hi = np.ceil(np.quantile(self.reward_hist, 0.8))
         print('Q High:', q_hi)
         if L < q_lo:
-            r =  -1
+            if mode == 'UCB1':
+                r = -1
+            if mode == 'EXP3':
+                r = 0
         elif L > q_hi:
             r = 1
         else:
@@ -196,41 +188,10 @@ class Bandit:
     def initialise_tasks(self):
         self.stored_tasks = [[i for i in row] for row in self.tasks]
         self.empty_tasks = [False for task in self.tasks]
-
-
-def Hedge(bandit, feedback, time_step, c=0.01, lr = 0.05, init = False):
-    num_tasks = len(bandit.tasks)
-    #Take best action
-    action = bandit.take_best_action(mode = 'EXP3', c = c, time_step = time_step)
-    #Update weights and qfunc
-    for action in range(num_tasks): 
-        bandit.W_exp3[action] = bandit.W_exp3[action] * ((1+lr)**feedback[action])
-    bandit.update_qfunc_EXP3(c = c)
-    return action 
-    
+ 
 
 def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, c=0.01, gain_type='PG'):
     bandit = Bandit(tasks = dataset.tasks, batch_size = batch_size)
-    ##### Initialization ######
-    #Play each of the arms once, observe the reward
-    '''
-    for i in range(len(bandit.tasks)):
-        batch = bandit.sample_task(i)
-        save_batch(current_batch = batch, batch_filename = 'batch')
-        create_model(i+1)
-        losses = load_losses(init=True)        
-        reward = bandit.calc_reward(losses)
-        bandit.update_qfunc_EXP3(c = c)
-    
-    init_action = bandit.take_greedy_action()
-    feedback = [1 if i == init_action else 0 for i in range(len(bandit.tasks))]
-    #Move best action model to the main model ckpt dir
-    initialise_model(init_action)
-    '''
-
-    #Initialize feedback with zeros or small positive values for optimistic initialization
-    feedback = [0 for i in range(len(bandit.tasks))]
-
     for ep in range(1, num_episodes+1):
         bandit.initialise_tasks()
         print('-----------------------------------------------')
@@ -238,17 +199,25 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, c=0.0
         print('-----------------------------------------------')
         for t in range(1, num_timesteps+1):
             choice = np.random.choice([0,1], 1, p = [1 - c, c])[0]
-            #Exploration
+            num_tasks = bandit.num_tasks
+            #Explore
             if choice:
-                num_tasks = len(bandit.tasks)
-                uni_prob = [1/num_tasks for i in range(num_tasks)]
-                tasks = [i for i in range(num_tasks)]
+                #None empty tasks
+                tasks = [i for i in range(num_tasks) if not bandit.empty_tasks[i]]
+                num_tasks = len(tasks)
+                #Break if no tasks is non empty. 
+                if num_tasks == 0:
+                    break
+                uni_prob = [1/num_tasks for i tasks]
                 action_t = np.random.choice(tasks, 1, p = uni_prob)[0]
-            #Choose the action returned by Hedge update
+            #Exploit
             else:
-                action_t = Hedge(bandit = bandit, feedback = feedback, time_step = t, c = c, lr = lr)
-            if action_t == -1:
-                break
+                #Choose action based on probabilities.
+                action_t = bandit.take_best_action(mode = 'EXP3', c)
+                #Break if no task is non empty
+                if action_t == -1:
+                    break
+            #Train and get the reward for the above action
             batch = bandit.sample_task(action_t)
             save_batch(current_batch = batch, batch_filename = 'batch')
             if gain_type == 'PG':
@@ -257,14 +226,15 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, lr = 0.05, c=0.0
                 resampled_batch = bandit.resample_task(batch, action_t)
                 save_batch(current_batch = resampled_batch, batch_filename = 'resampled_batch')
                 train_SPG()
-            #Constructing fake feedback to feed Hedge
-            num_tasks = len(bandit.tasks)
             losses = load_losses()
-            reward = bandit.calc_reward(losses)
-            if bandit._qfunc[i]['val'] > 0:
-                feedback = [reward/bandit._qfunc[i]['val'] if i == action_t else 0 for i in range(num_tasks)]
-            else:
-                feedback = [reward if i == action_t else 0 for i in range(num_tasks)]
+            'Might want to look if the reward below is in the range [0,1]!!'
+            reward = bandit.calc_reward(losses, mode = 'EXP3')
+            #Update weights
+            p_t = p_t = (1 - c) * (bandit.W_exp3/sum(bandit.W_exp3)) + c/bandit.num_tasks 
+            #Reward Mapping!!!!!!!!!!!aaaaaaaaaah
+            feedback = [reward/p_t[i] if i == action_t else 0 for i in range(bandit.num_tasks)]
+            for i in range(bandit.num_tasks):
+                bandit.W_exp3[i] = bandit.W_exp3[i]*np.exp(c*feedback[i]/bandit.num_tasks)
             print('Current reward:', reward)
             #Save histories to plot
             bandit.save_sc_rhist('sc_reward_hist_EXP3.pickle')
@@ -328,7 +298,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                 save_batch(current_batch = resampled_batch, batch_filename = 'resampled_batch')
                 train_SPG()
             losses = load_losses()
-            reward = bandit.calc_raw_reward(losses)
+            reward = bandit.calc_raw_reward(losses, mode = 'UCB1')
             print('Current reward:', reward)
             bandit.update_qfunc_UCB1(reward, action_t)
             #Save histories to plot
