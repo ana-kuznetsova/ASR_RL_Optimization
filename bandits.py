@@ -213,7 +213,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
             #Exploit
             else:
                 #Choose action based on probabilities.
-                action_t = bandit.take_best_action(mode = 'EXP3', c)
+                action_t = bandit.take_best_action(mode = 'EXP3', c=c)
                 #Break if no task is non empty
                 if action_t == -1:
                     break
