@@ -116,10 +116,14 @@ class Bandit:
         for EXP3 use
         '''
         avg_r = 0
-        if len(self.sc_reward_hist):
-            avg_r = (sum(self.sc_reward_hist) + scaled_r)/(len(self.sc_reward_hist)+1)
-              
+        rhist_len = len(self.sc_reward_hist)
+        if rhist_len > 0:
+            avg_r = self.sc_reward_hist[-1]
+        reward_so_far = avg_r * rhist_len
+        avg_r = (reward_so_far + scaled_r)/(1 + rhist_len)    
         self.sc_reward_hist.append(avg_r)
+
+
 
     def calc_raw_reward(self, losses):
         '''
