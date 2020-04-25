@@ -16,9 +16,29 @@ class ContextualBandit:
         self.action_hist = []
         self.theta = np.zeros((self.num_actions, dim))
 
+def sample_task(self, task_ind, replace=False):
+    if replace:
+        if len(self.stored_tasks[task_ind]) == 0:
+            return self.stored_tasks[task_ind]
+        if len(self.stored_tasks[task_ind]) < self.batch_size:
+            batch = self.stored_tasks[task_ind]
+            self.stored_tasks[task_ind] = np.array([])
+            self.empty_tasks[task_ind] = True
+            return batch
+        if len(self.stored_tasks[task_ind]) >= self.batch_size:
+            batch = np.random.choice(self.stored_tasks[task_ind], self.batch_size, replace = False)
+            self.stored_tasks[task_ind] = np.array([row for row in self.stored_tasks[task_ind] if row not in batch])
+            return batch
+    else:
+        ## Use for feedback simulation
+        batch = np.random.choice(self.stored_tasks[task_ind], self.batch_size, replace = True)
+        return batch
 
 
-def get_feedback(D_a, curr_action):
+
+
+
+def get_feedback(D_a, curr_action, bandit):
     '''
     Calculates the feedback (gain) for each context of a_t
     D_a (array): feature matrix for action a_t
@@ -27,6 +47,8 @@ def get_feedback(D_a, curr_action):
     prev_actions = D_a[:,0]
     for prev in prev_actions:
         ##sample batch from the previous action
+        prev_batch = bandit.sample_task(prev, replace=True)
+        
         ##train on prev_batch, get L1, save ckpt
         #train on current action from the prev_batch model, Get L2
         #Clean up ckpt dir
