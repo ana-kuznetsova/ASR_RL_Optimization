@@ -219,19 +219,18 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                     break
             #Train and get the reward for the above action
             batch = bandit.sample_task(action_t)
-            save_batch(current_batch = batch, batch_filename = 'batch')
+            save_batch(current_batch = batch, batch_filename = 'batch_exp3')
             if gain_type == 'PG':
                 train_PG()
             if gain_type == 'SPG':
                 resampled_batch = bandit.resample_task(batch, action_t)
-                save_batch(current_batch = resampled_batch, batch_filename = 'resampled_batch')
+                save_batch(current_batch = resampled_batch, batch_filename = 'resampled_batch_exp3')
                 train_SPG()
             losses = load_losses()
-            'Might want to look if the reward below is in the range [0,1]!!'
             reward = bandit.calc_reward(losses, mode = 'EXP3')
             #Update weights
             p_t = (1 - c) * (bandit.W_exp3/sum(bandit.W_exp3)) + c/bandit.num_tasks 
-            #Reward Mapping!!!!!!!!!!!aaaaaaaaaah
+            #Reward Mapping
             feedback = [reward/p_t[i] if i == action_t else 0 for i in range(bandit.num_tasks)]
             for i in range(bandit.num_tasks):
                 bandit.W_exp3[i] = bandit.W_exp3[i]*np.exp(c*feedback[i]/bandit.num_tasks)
@@ -298,7 +297,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                 save_batch(current_batch = resampled_batch, batch_filename = 'resampled_batch')
                 train_SPG()
             losses = load_losses()
-            reward = bandit.calc_raw_reward(losses, mode = 'UCB1')
+            reward = bandit.calc_raw_reward(losses)
             print('Current reward:', reward)
             bandit.update_qfunc_UCB1(reward, action_t)
             #Save histories to plot

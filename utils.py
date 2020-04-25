@@ -48,27 +48,40 @@ def initialise_model(best_greedy_a):
     best_a_path = '/N/slate/anakuzne/tt_ckpt_automated_curr/' + str(best_greedy_a+1) + '/* '
     os.system('cp -r ' + best_a_path + '/N/slate/anakuzne/tt_ckpt_automated_curr/main_model')
 
-def train_PG():
-    os.system('bash scripts/tt_train_pg.sh')
+def train_PG(mode):
+    if mode=='UCB1':
+        os.system('bash scripts/tt_train_pg.sh')
+    elif mode=='EXP3':
+        os.system('bash scripts/tt_train_pg_exp3.sh')
 
-def train_SPG():
-    os.system('bash scripts/tt_train_spg.sh')
 
- 
+def train_SPG(mode):
+    if mode=='UCB1':
+        os.system('bash scripts/tt_train_spg.sh')
+    elif mode=='EXP3':
+        os.system('bash scripts/tt_train_spg_exp3.sh') 
 
-def load_losses(init=False):
-    if init:
-        #Initialize losses with approximate loss values
-        #L1 = int(np.random.randint(low=600, high=700, size=1))
-        L1 = 1000
-    else: 
-        with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_before.json') as f:
+def load_losses(init=False, mode):
+    if mode == 'UCB1':
+        if init:
+            #Initialize losses with approximate loss values
+            #L1 = int(np.random.randint(low=600, high=700, size=1))
+            L1 = 1000
+        else: 
+            with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_before.json') as f:
+                loss_before = json.load(f)
+            L1 = sum([l['loss'] for l in loss_before])/len(loss_before)
+        
+        with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_after.json') as f:
+            loss_after = json.load(f)
+
+        L2 = sum([l['loss'] for l in loss_after])/len(loss_after)
+    elif mode=='EXP3':
+        with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_before_exp3.json') as f:
             loss_before = json.load(f)
         L1 = sum([l['loss'] for l in loss_before])/len(loss_before)
-    
-    with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_after.json') as f:
-        loss_after = json.load(f)
-
-    L2 = sum([l['loss'] for l in loss_after])/len(loss_after)
-
+        
+        with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_after_exp3.json') as f:
+            loss_after = json.load(f)
+        L2 = sum([l['loss'] for l in loss_after])/len(loss_after)
     return [L1, L2]
