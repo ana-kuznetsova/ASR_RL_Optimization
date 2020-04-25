@@ -208,7 +208,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                 #Break if no tasks is non empty. 
                 if num_tasks == 0:
                     break
-                uni_prob = [1/num_tasks for i tasks]
+                uni_prob = [1/num_tasks for i in range(tasks)]
                 action_t = np.random.choice(tasks, 1, p = uni_prob)[0]
             #Exploit
             else:
