@@ -48,7 +48,7 @@ def main(args):
     elif args.mode=='EXP3':
 
         print('Starting EXP3...')
-        EXP3(data, df, args.num_episodes, num_timesteps, args.batch_size, args.lr, args.c, args.gain_type)
+        EXP3(data, df, args.num_episodes, num_timesteps, args.batch_size, args.c, args.gain_type)
 
 
 if __name__ == '__main__':
