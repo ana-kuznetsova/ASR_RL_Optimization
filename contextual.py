@@ -44,22 +44,17 @@ class ContextualBandit:
     def get_qvalues(self):
         return self._qfunc
         
-    def sample_task(self, task_ind, replace=False):
-        if replace:
-            if len(self.stored_tasks[task_ind]) == 0:
-                return self.stored_tasks[task_ind]
-            if len(self.stored_tasks[task_ind]) < self.batch_size:
-                batch = self.stored_tasks[task_ind]
-                self.stored_tasks[task_ind] = np.array([])
-                self.empty_tasks[task_ind] = True
-                return batch
-            if len(self.stored_tasks[task_ind]) >= self.batch_size:
-                batch = np.random.choice(self.stored_tasks[task_ind], self.batch_size, replace = False)
-                self.stored_tasks[task_ind] = np.array([row for row in self.stored_tasks[task_ind] if row not in batch])
-                return batch
-        else:
-            ## Use for feedback simulation
-            batch = np.random.choice(self.stored_tasks[task_ind], self.batch_size, replace = True)
+    def sample_task(self, task_ind):
+        if len(self.stored_tasks[task_ind]) == 0:
+            return self.stored_tasks[task_ind]
+        if len(self.stored_tasks[task_ind]) < self.batch_size:
+            batch = self.stored_tasks[task_ind]
+            self.stored_tasks[task_ind] = np.array([])
+            self.empty_tasks[task_ind] = True
+            return batch
+        if len(self.stored_tasks[task_ind]) >= self.batch_size:
+            batch = np.random.choice(self.stored_tasks[task_ind], self.batch_size, replace = False)
+            self.stored_tasks[task_ind] = np.array([row for row in self.stored_tasks[task_ind] if row not in batch])
             return batch
         
     def calc_raw_reward(self, losses, feed=False):
