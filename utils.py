@@ -25,6 +25,7 @@ def clear_dirs():
     delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/2/')
     delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/3/')
     delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/main_model/')
+    delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/main_model_exp3/')
     delete_files('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/')
 
 def save_batch(current_batch, batch_filename):
