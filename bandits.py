@@ -83,7 +83,7 @@ class Bandit:
             w = [self.W_exp3[i] for i in tasks]
             sum_w = sum(w)
             num_tasks = len(tasks)
-            p_t = (1 - c) * [i/sum_w for i in w] + c/num_tasks 
+            p_t = (1 - c) * np.array([i/sum_w for i in w]) + c/num_tasks 
             best = np.random.choice(tasks, 1, p = p_t)[0]  
         return best
         
@@ -188,7 +188,14 @@ class Bandit:
     def initialise_tasks(self):
         self.stored_tasks = [[i for i in row] for row in self.tasks]
         self.empty_tasks = [False for task in self.tasks]
- 
+    
+    def update_EXP3_weights(self, reward, action, c = 0.01):
+        p_t = (1 - c) * (self.W_exp3/sum(self.W_exp3)) + c/self.num_tasks 
+        #Reward Mapping
+        feedback = [reward/p_t[i] if i == action else 0 for i in range(self.num_tasks)]
+        for i in range(self.num_tasks):
+            self.W_exp3[i] = self.W_exp3[i]*np.exp(c*feedback[i]/self.num_tasks)
+
 
 def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_type='PG'):
     bandit = Bandit(tasks = dataset.tasks, batch_size = batch_size)
@@ -208,7 +215,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                 #Break if no tasks is non empty. 
                 if num_tasks == 0:
                     break
-                uni_prob = [1/num_tasks for i in range(tasks)]
+                uni_prob = [1/num_tasks for i in range(num_tasks)]
                 action_t = np.random.choice(tasks, 1, p = uni_prob)[0]
             #Exploit
             else:
@@ -228,12 +235,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                 train_SPG()
             losses = load_losses()
             reward = bandit.calc_reward(losses, mode = 'EXP3')
-            #Update weights
-            p_t = (1 - c) * (bandit.W_exp3/sum(bandit.W_exp3)) + c/bandit.num_tasks 
-            #Reward Mapping
-            feedback = [reward/p_t[i] if i == action_t else 0 for i in range(bandit.num_tasks)]
-            for i in range(bandit.num_tasks):
-                bandit.W_exp3[i] = bandit.W_exp3[i]*np.exp(c*feedback[i]/bandit.num_tasks)
+            bandit.update_EXP3_weights(reward = reward, action = action_t, c = c)
             print('Current reward:', reward)
             #Save histories to plot
             bandit.save_sc_rhist('sc_reward_hist_EXP3.pickle')
