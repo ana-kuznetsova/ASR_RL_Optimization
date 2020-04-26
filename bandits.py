@@ -232,7 +232,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
             if gain_type == 'SPG':
                 resampled_batch = bandit.resample_task(batch, action_t)
                 save_batch(current_batch = resampled_batch, batch_filename = 'resampled_batch_exp3')
-                train_SPG()
+                train_SPG(mode='EXP3')
             losses = load_losses(mode="EXP3")
             reward = bandit.calc_reward(losses, mode = 'EXP3')
             bandit.update_EXP3_weights(reward = reward, action = action_t, c = c)
