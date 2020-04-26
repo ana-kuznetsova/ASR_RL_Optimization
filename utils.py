@@ -77,9 +77,12 @@ def load_losses(init=False, mode='UCB1'):
 
         L2 = sum([l['loss'] for l in loss_after])/len(loss_after)
     elif mode=='EXP3':
-        with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_before_exp3.json') as f:
-            loss_before = json.load(f)
-        L1 = sum([l['loss'] for l in loss_before])/len(loss_before)
+        try:
+            with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_before_exp3.json') as f:
+                loss_before = json.load(f)
+            L1 = sum([l['loss'] for l in loss_before])/len(loss_before)
+        except FileNotFoundError:
+            L1 = 800
         
         with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_after_exp3.json') as f:
             loss_after = json.load(f)
