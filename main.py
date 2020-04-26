@@ -29,7 +29,7 @@ Args:
 def main(args):
 
     #Clean up checkpoint dirs
-    clear_dirs()
+    clear_dirs(args.mode)
 
     df = pd.read_csv(args.df_path)
 
@@ -40,12 +40,12 @@ def main(args):
     num_timesteps = int(np.ceil(len(df)/args.batch_size))
 
     if args.mode=='UCB1':
-
         print('Starting UCB1...')
         
         UCB1(data, df, args.num_episodes, num_timesteps, args.batch_size, args.c, args.gain_type)
 
     elif args.mode=='EXP3':
+
 
         print('Starting EXP3...')
         EXP3(data, df, args.num_episodes, num_timesteps, args.batch_size, args.c, args.gain_type)

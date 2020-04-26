@@ -5,7 +5,7 @@ import json
 import shutil
 
 
-def clear_dirs():
+def clear_dirs(mode):
     '''
     Cleans up directories before the next training
     '''
@@ -20,13 +20,14 @@ def clear_dirs():
             except Exception as e:
                 print('Failed to delete %s. Reason: %s' % (file_path, e))
     
-
-    delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/1/')
-    delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/2/')
-    delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/3/')
-    delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/main_model/')
-    delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/main_model_exp3/')
-    delete_files('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/')
+    if mode=='UCB1':
+        delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/1/')
+        delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/2/')
+        delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/3/')
+        delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/main_model/')
+        delete_files('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/')
+    elif mode=='EXP3':
+        delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/main_model_exp3/')
 
 def save_batch(current_batch, batch_filename):
     '''
