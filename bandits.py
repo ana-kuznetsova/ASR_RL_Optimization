@@ -228,7 +228,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
             batch = bandit.sample_task(action_t)
             save_batch(current_batch = batch, batch_filename = 'batch_exp3')
             if gain_type == 'PG':
-                train_PG()
+                train_PG(mode='EXP3')
             if gain_type == 'SPG':
                 resampled_batch = bandit.resample_task(batch, action_t)
                 save_batch(current_batch = resampled_batch, batch_filename = 'resampled_batch_exp3')
