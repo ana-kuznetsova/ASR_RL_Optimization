@@ -22,7 +22,7 @@ Args:
     c=0.01, 
     gain_type='SPG'
     python main.py --df_path='tt_train_with_scores.csv' --num_tasks=3 --csv='train.csv' --num_episodes=1 --batch_size=64 --gain_type='PG' --c 0.5
-    python main.py --mode='EXP3' --df_path='tt_train_with_scores.csv' --num_tasks=3 --csv='train.csv' --num_episodes=1 --batch_size=64 --gain_type='PG' --c 0.1 --lr 0.01 
+    python main.py --mode='EXP3' --df_path='tt_train_with_scores.csv' --num_tasks=3 --csv='train.csv' --num_episodes=1 --batch_size=64 --gain_type='PG' --c 0.1 
 
 '''
 

@@ -244,8 +244,8 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
             bandit.save_lhist('loss_hist_EXP3.pickle')
             bandit.save_action_hist('action_hist_EXP3.pickle')
             print('-----------------------------------------------')
-            print('Current Q-function')
-            bandit.print_qfunc()
+            print('Current Weights')
+            bandit.print_weights()
             print('-----------------------------------------------')
 
 def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_type='PG'):
@@ -309,7 +309,6 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
             bandit.save_lhist('loss_hist_UCB1.pickle')
             bandit.save_action_hist('action_hist_UCB1.pickle')
             print('-----------------------------------------------')
-            print('Current weights')
-            bandit.print_weights()
+            print('Current Q-function')
+            bandit.print_qfunc()
             print('-----------------------------------------------')
-
