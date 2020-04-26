@@ -19,6 +19,8 @@ class Bandit:
         self.empty_tasks = None
         self.W_exp3 = np.ones(len(self.tasks))
     
+    def print_weights(self):
+        print(self.W_exp3)
 
     def save_sc_rhist(self, rhist_path):
         '''
@@ -307,7 +309,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
             bandit.save_lhist('loss_hist_UCB1.pickle')
             bandit.save_action_hist('action_hist_UCB1.pickle')
             print('-----------------------------------------------')
-            print('Current Q-function')
-            bandit.print_qfunc()
+            print('Current weights')
+            bandit.print_weights()
             print('-----------------------------------------------')
 
