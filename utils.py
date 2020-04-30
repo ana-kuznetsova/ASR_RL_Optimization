@@ -105,7 +105,7 @@ def load_losses(init=False, mode='UCB1'):
 
     elif mode=='LinUCB':
         with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_before_lin.json') as f:
-        loss_before = json.load(f)
+            loss_before = json.load(f)
         L1 = sum([l['loss'] for l in loss_before])/len(loss_before)
         
         with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_after_lin.json') as f:
