@@ -1,5 +1,6 @@
 from data import DataSet
 from bandits import UCB1, EXP3
+from contextual import LinUCB
 from utils import clear_dirs
 
 import pandas as pd
@@ -50,6 +51,9 @@ def main(args):
         print('Starting EXP3...')
         EXP3(data, df, args.num_episodes, num_timesteps, args.batch_size, args.c, args.gain_type)
 
+    elif args.mode=='LinUCB':
+        
+        LinUCB(data, args.num_episodes, num_timesteps, args.batch_size)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Process some integers.')

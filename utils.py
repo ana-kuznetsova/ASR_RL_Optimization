@@ -5,6 +5,7 @@ import json
 import shutil
 
 
+
 def clear_dirs(mode):
     '''
     Cleans up directories before the next training
@@ -55,6 +56,8 @@ def train_PG(mode):
         os.system('bash scripts/tt_train_pg.sh')
     elif mode=='EXP3':
         os.system('bash scripts/tt_train_pg_exp3.sh')
+    elif mode=='LinUCB':
+        os.system('bash scripts/train_linUCB_main.sh')
 
 
 def train_SPG(mode):
@@ -89,27 +92,8 @@ def load_losses(init=False, mode='UCB1'):
         with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_after_exp3.json') as f:
             loss_after = json.load(f)
         L2 = sum([l['loss'] for l in loss_after])/len(loss_after)
-    return [L1, L2]
 
-
-######## Utils for LinUCB #########
-def train_feed():
-    #Clean up dir
-    feed_model_path = '/N/slate/anakuzne/tt_ckpt_automated_curr/feed_model'
-    delete_files(feed_model_path)
-    #Copy main model to the ckpt dir
-    main_model_lin = '/N/slate/anakuzne/tt_ckpt_automated_curr/main_model_lin/* '
-    os.system('cp -r ' + main_model_lin + feed_model_path)
-    os.system('bash train_linUCB_feed.sh')
-
-
-def load_losses_lin(feed=True):
-    if feed:
-        with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_after_feed.json') as f:
-            loss_after = json.load(f)
-        L2 = sum([l['loss'] for l in loss_after])/len(loss_after)
-        return L2
-    else:
+    elif mode=='LinUCB':
         with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_before_lin.json') as f:
             loss_before = json.load(f)
         L1 = sum([l['loss'] for l in loss_before])/len(loss_before)
@@ -117,4 +101,4 @@ def load_losses_lin(feed=True):
         with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_after_lin.json') as f:
             loss_after = json.load(f)
         L2 = sum([l['loss'] for l in loss_after])/len(loss_after)
-    return [L1, L2]        
+    return [L1, L2]             
