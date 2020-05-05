@@ -4,8 +4,6 @@ import os
 import json
 import shutil
 
-
-
 def clear_dirs(mode):
     '''
     Cleans up directories before the next training
@@ -41,7 +39,6 @@ def save_batch(current_batch, batch_filename):
     df = pd.read_csv('train.csv')
     s = [v.replace('.mp3', '.wav') for v in current_batch]
     df = df[df['wav_filename'].isin(s)]
-
     df.to_csv('/N/slate/anakuzne/tatar/clips/'+batch_filename+'.csv')
 
 def create_model(taskID):
@@ -59,14 +56,20 @@ def train_PG(mode):
     elif mode=='LinUCB':
         os.system('bash scripts/train_linUCB_main.sh')
 
-
 def train_SPG(mode):
     if mode=='UCB1':
         os.system('bash scripts/tt_train_spg.sh')
     elif mode=='EXP3':
         os.system('bash scripts/tt_train_spg_exp3.sh') 
 
+def train_model():
+    os.system('bash scripts/tt_train_sw_task.sh')
+
 def load_losses(init=False, mode='UCB1'):
+    if mode == 'switch-task':
+        with open('Path/to/loss/file/pickle'):
+            loss = json.loads(f)
+        return loss
     if mode == 'UCB1':
         if init:
             #Initialize losses with approximate loss values
@@ -75,20 +78,17 @@ def load_losses(init=False, mode='UCB1'):
         else: 
             with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_before.json') as f:
                 loss_before = json.load(f)
-            L1 = sum([l['loss'] for l in loss_before])/len(loss_before)
-        
+            L1 = sum([l['loss'] for l in loss_before])/len(loss_before)        
         with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_after.json') as f:
             loss_after = json.load(f)
-
         L2 = sum([l['loss'] for l in loss_after])/len(loss_after)
     elif mode=='EXP3':
-        try:
+        try:#Why?
             with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_before_exp3.json') as f:
                 loss_before = json.load(f)
             L1 = sum([l['loss'] for l in loss_before])/len(loss_before)
         except FileNotFoundError:
             L1 = 800
-        
         with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_after_exp3.json') as f:
             loss_after = json.load(f)
         L2 = sum([l['loss'] for l in loss_after])/len(loss_after)
@@ -97,7 +97,6 @@ def load_losses(init=False, mode='UCB1'):
         with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_before_lin.json') as f:
             loss_before = json.load(f)
         L1 = sum([l['loss'] for l in loss_before])/len(loss_before)
-        
         with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_after_lin.json') as f:
             loss_after = json.load(f)
         L2 = sum([l['loss'] for l in loss_after])/len(loss_after)
