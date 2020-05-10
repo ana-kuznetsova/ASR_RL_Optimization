@@ -1,19 +1,20 @@
 from data import DataSet
-from utils import clear_dirs, save_batch, load_losses, train_model
+from utils import clear_dirs, save_batch, load_losses, train_SWTSK
 import pandas as pd
 import numpy as np
 import math
 
+
 """"
 task = [1]
-For each epoch:
+For each task:
     1. Create a new csv with task samples.
     2. Train network
     3. Store losses upon early stopping
     4. Append new task in taskqueue. 
 """
 
-class switch-task:
+class SWTSK:
     def __intit__(self, tasks):
         self.tasks = tasks
         self.loss_hist = []
@@ -25,16 +26,20 @@ class switch-task:
         np.random.shuffle(curr_data)
         save_batch(curr_data,"switch-task-train")
 
-    def train(self, num_epoches):
+    def train(self):
         num_tasks = len(self.tasks)
-        for epoch in num_epoches:
-            task_q = [0]
-            for task in range(1, num_tasks):
-                self.create_task(task_q)
-                train_model()
-                loss_so_far = load_losses('switch_task')
-                self.loss_hist.extend(loss_so_far)
-                task_q.append(task_q[-1] + 1)
+        task_q = [0]
+        for task in range(1, num_tasks):
+            self.create_task(task_q)
+            train_SWTSK()
+            loss_so_far = load_losses('switch_task')
+            self.loss_hist.extend(loss_so_far)
+            task_q.append(task_q[-1] + 1)
         np.save(self.loss_hist, 'loss-hist-switch-task.npy')
         
 
+'''
+c = 5, o = 10, cr = 0.5, 1-cr = 0.5
+c = 1, o = 3, cr = 0.33, 1-cr = 0.66
+cr = (o - c)/o
+'''

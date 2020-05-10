@@ -3,6 +3,7 @@ import numpy as np
 import os
 import json
 import shutil
+import pickle
 
 def clear_dirs(mode):
     '''
@@ -62,13 +63,13 @@ def train_SPG(mode):
     elif mode=='EXP3':
         os.system('bash scripts/tt_train_spg_exp3.sh') 
 
-def train_model():
+def train_SWTSK():
     os.system('bash scripts/tt_train_sw_task.sh')
 
 def load_losses(init=False, mode='UCB1'):
     if mode == 'switch-task':
         with open('Path/to/loss/file/pickle'):
-            loss = json.loads(f)
+            loss = pickle.loads(f)
         return loss
     if mode == 'UCB1':
         if init:

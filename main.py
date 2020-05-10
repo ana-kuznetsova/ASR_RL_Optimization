@@ -1,6 +1,7 @@
 from data import DataSet
 from bandits import UCB1, EXP3
 from contextual import LinUCB
+from switch-task import SWTSK
 from utils import clear_dirs
 
 import pandas as pd
@@ -40,20 +41,20 @@ def main(args):
 
     num_timesteps = int(np.ceil(len(df)/args.batch_size))
 
-    if args.mode=='UCB1':
-        print('Starting UCB1...')
-        
+    if args.mode == 'UCB1':
+        print('Starting UCB1...')        
         UCB1(data, df, args.num_episodes, num_timesteps, args.batch_size, args.c, args.gain_type)
 
-    elif args.mode=='EXP3':
-
-
+    elif args.mode == 'EXP3':
         print('Starting EXP3...')
         EXP3(data, df, args.num_episodes, num_timesteps, args.batch_size, args.c, args.gain_type)
 
-    elif args.mode=='LinUCB':
-        
+    elif args.mode == 'LinUCB':       
         LinUCB(data, args.num_episodes, num_timesteps, args.batch_size)
+
+    elif args.mode == 'SWTSK':
+        SWTSK(data)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Process some integers.')
