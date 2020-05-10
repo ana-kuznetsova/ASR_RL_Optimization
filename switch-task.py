@@ -43,6 +43,7 @@ c = 5, o = 10, cr = 0.5, 1-cr = 0.5
 c = 1, o = 3, cr = 0.33, 1-cr = 0.66
 cr = (o - c)/o
 
+t(x) = length of the longest sequence --> scaling factor for reward
 
 rewards :
 
