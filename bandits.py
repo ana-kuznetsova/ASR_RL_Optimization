@@ -137,7 +137,8 @@ class Bandit:
         Saves loss hist to loss_hist
         '''
         print('Loss array:', losses)
-        L = losses[0]- losses[1]
+        #Tau 230202 - scale factor, length of the longest input
+        L = (losses[0]- losses[1])/230202
         print('L:', L)
         self.loss_hist.append(losses[1])
         print('Loss hist:', self.loss_hist)
@@ -148,9 +149,9 @@ class Bandit:
         q_hi = np.ceil(np.quantile(self.reward_hist, 0.8))
         print('Q High:', q_hi)
         if L < q_lo:
-            if mode == 'UCB1':
-                r = -1
-            if mode == 'EXP3':
+            #if mode == 'UCB1':
+            r = -1
+            #if mode == 'EXP3':
                 r = 0
         elif L > q_hi:
             r = 1
