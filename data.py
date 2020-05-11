@@ -15,6 +15,8 @@ class DataSet:
         def split(dfm, chunk_size):
             indices = index_marks(dfm.shape[0], chunk_size)
             return np.split(dfm, indices)
+
+        self.data['compression_scores'] = 1 - self.data['compression_scores']
         
         sorted_df = self.data.sort_values(by=['compression_scores'], ascending=False)['path'].values
         chunk_size = len(sorted_df)//self.num_tasks
