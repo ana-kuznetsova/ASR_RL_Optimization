@@ -238,7 +238,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
             bandit.print_weights()
             print('-----------------------------------------------')
 
-def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_type='PG', hist_path):
+def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c=0.01, gain_type='PG'):
     '''
     Params:
         dataset (object): of class DataSet
