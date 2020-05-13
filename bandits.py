@@ -289,7 +289,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c=0.0
                 save_batch(current_batch = resampled_batch, batch_filename = 'resampled_batch')
                 train_SPG(mode='UCB1')
             losses = load_losses(mode='UCB1')
-            reward = bandit.calc_raw_reward(losses, ep, t)
+            reward = bandit.calc_reward(losses, ep, t)
             print('Current reward:', reward)
             bandit.update_qfunc_UCB1(reward, action_t)
             #Save histories to plot
