@@ -130,7 +130,7 @@ class Bandit:
         L = (losses[0]- losses[1])/230202
         print('L:', L)
         self.loss_hist.append(losses[1])
-
+        
         ##Scale reward
         ## Take quantiles for N epoch starting from 0
         q_lo = np.ceil(np.quantile(self.reward_hist[0:episode, :], 0.2))
@@ -256,14 +256,14 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c=0.0
     ##### Initialization ######
     #Play each of the arms once, observe the reward
     
-    for i in range(len(bandit.tasks)):
-        batch = bandit.sample_task(i)
+    for i in range(1, len(bandit.tasks)+1):
+        batch = bandit.sample_task(i-1)
         save_batch(current_batch = batch, batch_filename = 'batch')
-        create_model(i+1)
+        create_model(i)
         losses = load_losses(init=True)        
         reward = bandit.calc_reward(losses, 0, i)
         
-        bandit.update_qfunc_UCB1(reward, i)
+        bandit.update_qfunc_UCB1(reward, i-1)
     
     #Initialize optimistically
     
