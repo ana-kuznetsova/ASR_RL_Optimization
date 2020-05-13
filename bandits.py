@@ -238,7 +238,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
             bandit.print_weights()
             print('-----------------------------------------------')
 
-def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_type='PG'):
+def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_type='PG', hist_path):
     '''
     Params:
         dataset (object): of class DataSet
@@ -261,7 +261,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
         save_batch(current_batch = batch, batch_filename = 'batch')
         create_model(i+1)
         losses = load_losses(init=True)        
-        reward = bandit.calc_reward(losses, 0, 0)
+        reward = bandit.calc_reward(losses, 0, i)
         
         bandit.update_qfunc_UCB1(reward, i)
     
@@ -292,13 +292,12 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
                 save_batch(current_batch = resampled_batch, batch_filename = 'resampled_batch')
                 train_SPG(mode='UCB1')
             losses = load_losses(mode='UCB1')
-            reward = bandit.calc_raw_reward(losses)
+            reward = bandit.calc_raw_reward(losses, ep, t)
             print('Current reward:', reward)
             bandit.update_qfunc_UCB1(reward, action_t)
             #Save histories to plot
-            bandit.save_sc_rhist('sc_reward_hist_UCB1.pickle')
-            bandit.save_lhist('loss_hist_UCB1.pickle')
-            bandit.save_action_hist('action_hist_UCB1.pickle')
+            #hist_path, mode='UCB1', gain_type='PG'
+            bandit.save_hist(hist_path, mode='UCB1', gain_type=gain_type)
             print('-----------------------------------------------')
             print('Current Q-function')
             bandit.print_qfunc()

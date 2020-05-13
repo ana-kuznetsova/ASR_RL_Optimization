@@ -43,7 +43,7 @@ def main(args):
     if args.mode=='UCB1':
         print('Starting UCB1...')
         
-        UCB1(data, df, args.num_episodes, num_timesteps, args.batch_size, args.c, args.gain_type)
+        UCB1(data, df, args.num_episodes, num_timesteps, args.batch_size, args.c, args.gain_type, args.hist_path)
 
     elif args.mode=='EXP3':
 
@@ -65,5 +65,6 @@ if __name__ == '__main__':
     parser.add_argument('--c', type=float, help='Exploration rate')
     parser.add_argument('--gain_type', type=str, help='Gain type (Prediction Gain, Self-Prediction Gain)', required=True)
     parser.add_argument('--mode', type=str, help='Algorithms to run', required=True)
+    parser.add_argument('--hist_path', type=str, help='Path to save history files', required=True)
     args = parser.parse_args()
     main(args)
