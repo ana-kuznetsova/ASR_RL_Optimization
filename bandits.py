@@ -47,10 +47,7 @@ class Bandit:
         '''
         self._qfunc[action]["a"]+=1
         self._qfunc[action]["r"]+=reward
-        if self._qfunc[action]["r"] == 0:
-            self._qfunc[action]["val"] = self._qfunc[action]["r"]/(self._qfunc[action]["a"]+0.000000001)
-        else:
-            self._qfunc[action]["val"] = self._qfunc[action]["r"]/self._qfunc[action]["a"]
+        self._qfunc[action]["val"] = self._qfunc[action]["r"]/self._qfunc[action]["a"]
    
     def print_qfunc(self):
         print(self._qfunc)
