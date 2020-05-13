@@ -42,8 +42,7 @@ def main(args):
 
     if args.mode=='UCB1':
         print('Starting UCB1...')
-        dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c=0.01, gain_type='PG'
-        
+       
         UCB1(dataset=data, csv=df, 
                 num_episodes=args.num_episodes,
                 num_timesteps=num_timesteps, 
