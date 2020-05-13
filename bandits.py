@@ -261,7 +261,7 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c=0.0
         save_batch(current_batch = batch, batch_filename = 'batch')
         create_model(i)
         losses = load_losses(init=True)        
-        reward = bandit.calc_reward(losses, 0, i)
+        reward = bandit.calc_reward(losses, 1, i)
         
         bandit.update_qfunc_UCB1(reward, i-1)
     
