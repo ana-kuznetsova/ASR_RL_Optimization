@@ -42,8 +42,15 @@ def main(args):
 
     if args.mode=='UCB1':
         print('Starting UCB1...')
+        dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c=0.01, gain_type='PG'
         
-        UCB1(data, df, args.num_episodes, num_timesteps, args.batch_size, args.c, args.gain_type, args.hist_path)
+        UCB1(dataset=data, csv=df, 
+                num_episodes=args.num_episodes,
+                num_timesteps=num_timesteps, 
+                batch_size=args.batch_size, 
+                hist_path=args.hist_path,
+                c=args.c, 
+                gain_type=args.gain_type)
 
     elif args.mode=='EXP3':
 

@@ -65,8 +65,6 @@ class Bandit:
         best = -1
         if mode == 'UCB1':
             for action in self._qfunc:
-                print('C: ', c)
-                print('Term ', np.sqrt((np.log(time_step)/self._qfunc[action]["a"])))
                 q = self._qfunc[action]['val'] + c*np.sqrt((np.log(time_step)/self._qfunc[action]["a"]))
                 action_vals.append((q,action))
             #Store only those actions which have non empty tasks. 
