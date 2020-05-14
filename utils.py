@@ -68,7 +68,7 @@ def train_SWTSK():
 
 def load_losses(init=False, mode='UCB1'):
     if mode == 'switch-task':
-        with open('Path/to/loss/file/pickle'):
+        with open('N/u/ak16/Carbonate/TT_Data/losses/transfer_losses.pickle'):
             loss = pickle.loads(f)
         return loss
     if mode == 'UCB1':

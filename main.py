@@ -1,7 +1,7 @@
 from data import DataSet
 from bandits import UCB1, EXP3
 from contextual import LinUCB
-from switch-task import SWTSK
+from switchtask import SWTSK
 from utils import clear_dirs
 
 import pandas as pd
