@@ -26,7 +26,10 @@ class Bandit:
         if mode=='UCB1':
             f = open(hist_path + 'loss_ucb1_' + gain_type + '.pickle', 'wb')
             pickle.dump(self.loss_hist, f)
+            f.close()
             f = open(hist_path + 'actions_ucb1_' + gain_type + '.pickle', 'wb')
+            pickle.dump(self.action_hist, f)
+            f.close()
 
             #Calculate avg reward
             r =  np.mean(self.reward_hist, axis=0)
@@ -34,7 +37,10 @@ class Bandit:
         elif mode=='EXP3':
             f = open(hist_path + 'loss_exp3_' + gain_type + '.pickle', 'wb')
             pickle.dump(self.loss_hist, f)
+            f.close()
             f = open(hist_path + 'actions_exp3_' + gain_type + '.pickle', 'wb')
+            pickle.dump(self.action_hist, f)
+            f.close()
 
             #Calculate avg reward
             r =  np.mean(self.reward_hist, axis=0)
