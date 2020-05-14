@@ -11,7 +11,7 @@ class Bandit:
         self.num_tasks = len(tasks)
         self._qfunc = {a:{"a":0, "r":0, "val":0} for a in range(len(tasks))}
         self.policy = {}
-        self.reward_hist = np.zeros((num_episodes+1, num_timesteps))
+        self.reward_hist = np.zeros((num_episodes+1, num_timesteps+1))
         self.loss_hist = []
         self.action_hist = []
         self.sc_reward_hist = []
