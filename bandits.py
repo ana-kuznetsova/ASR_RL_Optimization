@@ -149,7 +149,7 @@ class Bandit:
             r = 1
         else:
             if ((q_hi-q_lo)-1) == 0:
-                r = (2*(L-q_lo))/(((q_hi-q_lo)-1)+0.0000000000001)
+                r = 0
             else:
                 r = (2*(L-q_lo))/((q_hi-q_lo)-1)
     
