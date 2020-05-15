@@ -137,7 +137,7 @@ class Bandit:
         ##Scale reward
         ## Take quantiles for N epoch starting from 0
         rhist_sofar = np.concatenate([np.ravel(self.reward_hist[:episode-1]), 
-                                     self.reward_hist[episode-1, :time_step]], axis=0)
+                                     self.reward_hist[episode, :time_step]], axis=0)
 
         q_lo = np.ceil(np.quantile(rhist_sofar, 0.2))
         print('Q Low:', q_lo)
