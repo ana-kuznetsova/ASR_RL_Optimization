@@ -197,7 +197,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
     for ep in range(1, num_episodes+1):
         bandit.initialise_tasks()
         print('-----------------------------------------------')
-        print(f"Starting episode {ep} ...")
+       # print(f"Starting episode {ep} ...")
         print('-----------------------------------------------')
         for t in range(1, num_timesteps+1):
             choice = np.random.choice([0,1], 1, p = [1 - c, c])[0]
