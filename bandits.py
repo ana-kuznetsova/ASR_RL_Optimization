@@ -31,6 +31,11 @@ class Bandit:
             pickle.dump(self.action_hist, f)
             f.close()
 
+            #Save cumulative reward
+            f = open(hist_path + 'cumulative_r_ucb1_' + gain_type + '.pickle', 'wb')
+            pickle.dump(self.sc_reward_hist, f)
+            f.close()
+
             #Calculate avg reward
             r =  np.mean(self.reward_hist, axis=0)
             np.save(hist_path + 'avg_r_ucb1_' + gain_type + '.npy', r)
@@ -105,8 +110,6 @@ class Bandit:
         if len(self.sc_reward_hist):
             last_r = self.sc_reward_hist[-1]        
         self.sc_reward_hist.append(scaled_r + last_r)
-        #max_reward = max(self.sc_reward_hist)
-        #self.sc_reward_hist = [i/max_reward for i in self.sc_reward_hist]
 
     def calc_raw_reward(self, losses):
         '''
@@ -159,6 +162,7 @@ class Bandit:
     
         #Add to reward history
         self.reward_hist[episode][time_step] = r
+        self.set_cummulative_r(r)
         return r
 
     def sample_task(self, task_ind):
