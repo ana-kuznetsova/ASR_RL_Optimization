@@ -184,7 +184,7 @@ def LinUCB(dataset, hist_path, num_episodes, num_timesteps, batch_size, gain_typ
             b_t = b_t + r*x_t
             bandit.update_qfunc(a_t, A_t, b_t)  
             #Save histories to plot
-            save_hist(hist_path, gain_type)
+            bandit.save_hist(hist_path, gain_type)
             print('-----------------------------------------------')
             print('Current Q-function')
             print(bandit.get_qvalues())
