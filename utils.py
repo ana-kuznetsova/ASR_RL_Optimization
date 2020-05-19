@@ -36,6 +36,8 @@ def clear_dirs(mode):
         delete_files('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/')
     elif mode=='EXP3':
         delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/main_model_exp3/')
+    elif mode=='LinUCB':
+        delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/main_model_lin/')
 
 def save_batch(current_batch, batch_filename):
     '''
