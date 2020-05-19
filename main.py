@@ -59,7 +59,7 @@ def main(args):
 
     elif args.mode=='LinUCB':
         
-        LinUCB(data, args.num_episodes, num_timesteps, args.batch_size)
+        LinUCB(data, args.hist_path, args.num_episodes, num_timesteps, args.batch_size)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Process some integers.')
