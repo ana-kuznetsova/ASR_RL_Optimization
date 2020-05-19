@@ -24,6 +24,13 @@ def clear_dirs(mode):
         delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/1/')
         delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/2/')
         delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/3/')
+        delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/4/')
+        delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/5/')
+        delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/6/')
+        delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/7/')
+        delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/8/')
+        delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/9/')
+        delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/10/')
         delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/main_model/')
         delete_files('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/')
     elif mode=='EXP3':

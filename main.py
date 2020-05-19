@@ -41,9 +41,16 @@ def main(args):
 
     num_timesteps = int(np.ceil(len(df)/args.batch_size))
 
-    if args.mode == 'UCB1':
-        print('Starting UCB1...')        
-        UCB1(data, df, args.num_episodes, num_timesteps, args.batch_size, args.c, args.gain_type)
+    if args.mode=='UCB1':
+        print('Starting UCB1...')
+       
+        UCB1(dataset=data, csv=df, 
+                num_episodes=args.num_episodes,
+                num_timesteps=num_timesteps, 
+                batch_size=args.batch_size, 
+                hist_path=args.hist_path,
+                c=args.c, 
+                gain_type=args.gain_type)
 
     elif args.mode == 'EXP3':
         print('Starting EXP3...')
@@ -66,5 +73,6 @@ if __name__ == '__main__':
     parser.add_argument('--c', type=float, help='Exploration rate')
     parser.add_argument('--gain_type', type=str, help='Gain type (Prediction Gain, Self-Prediction Gain)', required=True)
     parser.add_argument('--mode', type=str, help='Algorithms to run', required=True)
+    parser.add_argument('--hist_path', type=str, help='Path to save history files', required=True)
     args = parser.parse_args()
     main(args)
