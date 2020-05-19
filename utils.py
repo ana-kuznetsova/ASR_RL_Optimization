@@ -66,6 +66,9 @@ def train_SPG(mode):
 def train_SWTSK():
     os.system('bash scripts/tt_train_sw_task.sh')
 
+def run_validation():
+    os.system('bash scripts/tt_val.sh')
+
 def load_losses(init=False, mode='UCB1'):
     if mode == 'switch-task':
         with open('N/u/ak16/Carbonate/TT_Data/losses/transfer_losses.pickle'):

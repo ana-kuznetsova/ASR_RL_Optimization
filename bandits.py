@@ -17,6 +17,7 @@ class Bandit:
         self.sc_reward_hist = []
         self.batch_size = batch_size
         self.empty_tasks = None
+        self.val_loss = []
         self.W_exp3 = np.ones(len(self.tasks))
     
     def print_weights(self):
@@ -312,3 +313,5 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
             print('Current Q-function')
             bandit.print_qfunc()
             print('-----------------------------------------------')
+        #Run validation after each epoch finishes
+        run_validation()
