@@ -169,7 +169,7 @@ def LinUCB(dataset, hist_path, num_episodes, num_timesteps, batch_size, gain_typ
             batch = bandit.sample_task(a_t)
             save_batch(batch, 'batch_lin')
             train_PG(mode='LinUCB')
-            losses = load_losses_lin(feed=False)
+            losses = load_losses('LinUCB')
             #losses = [700, 332]
             r = bandit.calc_reward(losses)
             print('reward:',r)
