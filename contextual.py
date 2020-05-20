@@ -164,7 +164,7 @@ def LinUCB(dataset, hist_path, num_episodes, num_timesteps, batch_size, gain_typ
                 probs.append(float(e))
             print('Probs', probs)
             #Filter empty tasks!!!!
-            temp_probs = [(val, i) for i,val in enumerate(probs) if not self.empty_tasks[i]]
+            temp_probs = [(val, i) for i,val in enumerate(probs) if not bandit.empty_tasks[i]]
             if len(temp_probs) == 0:
                 break
             temp_probs = sorted(temp_probs)
