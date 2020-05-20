@@ -19,23 +19,26 @@ class ContextualBandit:
         self.action_hist = []
         self.sc_reward_hist = []
         self.val_loss = []
+        self.empty_tasks = [False for i in range(len(self.tasks))]
         self.theta = np.zeros((self.num_actions, dim))
         
-    def save_sc_rhist(self, rhist_path):
-        '''
-        Save the history of scaled cumulative rewards
-        to file 
-        '''
-        f = open(rhist_path, 'wb')
-        pickle.dump(self.sc_reward_hist, f)
-
-    def save_lhist(self, lhist_path):
-        f = open(lhist_path, 'wb')
+    def save_hist(self, hist_path, gain_type='PG'):
+        f = open(hist_path + 'loss_lin_' + gain_type + '.pickle', 'wb')
         pickle.dump(self.loss_hist, f)
-    
-    def save_action_hist(self, action_hist_path):
-        f = open(action_hist_path, 'wb')
+        f.close()
+
+        f = open(hist_path + 'actions_lin_' + gain_type + '.pickle', 'wb')
         pickle.dump(self.action_hist, f)
+        f.close()
+
+        #Save cumulative reward
+        f = open(hist_path + 'cumulative_r_lin_' + gain_type + '.pickle', 'wb')
+        pickle.dump(self.sc_reward_hist, f)
+        f.close()
+
+        #Calculate avg reward
+        r =  np.mean(self.reward_hist, axis=0)
+        np.save(hist_path + 'avg_r_lin_' + gain_type + '.npy', r)
 
     
     def update_qfunc(self, action, A, b):
@@ -132,7 +135,7 @@ class ContextualBandit:
         self.action_hist.append(action)
 
 
-def LinUCB(dataset, num_episodes, num_timesteps, batch_size, gain_type='PG'):
+def LinUCB(dataset, hist_path, num_episodes, num_timesteps, batch_size, gain_type='PG'):
     alpha = 0.05    
     bandit = ContextualBandit(tasks=dataset.tasks, batch_size=64, dim=5)  
     for ep in range(num_episodes):
@@ -161,14 +164,20 @@ def LinUCB(dataset, num_episodes, num_timesteps, batch_size, gain_type='PG'):
                 e = np.dot(theta.T, x_t) + root
                 probs.append(float(e))
             print('Probs', probs)
+            #Filter empty tasks!!!!
+            temp_probs = [(val, i) for i,val in enumerate(probs) if not bandit.empty_tasks[i]]
+            if len(temp_probs) == 0:
+                break
+            temp_probs = sorted(temp_probs)
+            a_t = temp_probs[-1][1]
             #Take argmax
-            a_t = np.argmax(np.array(probs))
+            #a_t = np.argmax(np.array(probs))
             print('Argmax action:', a_t)
             bandit.upd_action_hist(a_t)
             batch = bandit.sample_task(a_t)
             save_batch(batch, 'batch_lin')
             train_PG(mode='LinUCB')
-            losses = load_losses_lin(feed=False)
+            losses = load_losses('LinUCB')
             #losses = [700, 332]
             r = bandit.calc_reward(losses)
             print('reward:',r)
@@ -183,9 +192,7 @@ def LinUCB(dataset, num_episodes, num_timesteps, batch_size, gain_type='PG'):
             b_t = b_t + r*x_t
             bandit.update_qfunc(a_t, A_t, b_t)  
             #Save histories to plot
-            bandit.save_sc_rhist('sc_reward_hist_LinUCB.pickle')
-            bandit.save_lhist('loss_hist_LinUCB.pickle')
-            bandit.save_action_hist('action_hist_LinUCB.pickle')
+            bandit.save_hist(hist_path, gain_type)
             print('-----------------------------------------------')
             print('Current Q-function')
             print(bandit.get_qvalues())
