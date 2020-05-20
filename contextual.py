@@ -135,7 +135,7 @@ class ContextualBandit:
         self.action_hist.append(action)
 
 
-def LinUCB(dataset, hist_path, num_episodes, num_timesteps, batch_size, gain_type='PG'):
+def LinUCB(dataset, hist_path, val_dir, num_episodes, num_timesteps, batch_size, gain_type='PG'):
     alpha = 0.05    
     bandit = ContextualBandit(tasks=dataset.tasks, batch_size=64, dim=5)  
     for ep in range(num_episodes):
@@ -197,3 +197,6 @@ def LinUCB(dataset, hist_path, num_episodes, num_timesteps, batch_size, gain_typ
             print('Current Q-function')
             print(bandit.get_qvalues())
             print('-----------------------------------------------')
+        run_validation(val_dir)
+        dev_err = loadValLoss()
+        self.val_loss.append(dev_err)
