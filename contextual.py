@@ -18,6 +18,7 @@ class ContextualBandit:
         self.reward_hist = []
         self.action_hist = []
         self.sc_reward_hist = []
+        self.empty_tasks = [False for i in range(len(self.tasks))]
         self.theta = np.zeros((self.num_actions, dim))
         
     def save_hist(self, hist_path, gain_type='PG'):
@@ -162,8 +163,14 @@ def LinUCB(dataset, hist_path, num_episodes, num_timesteps, batch_size, gain_typ
                 e = np.dot(theta.T, x_t) + root
                 probs.append(float(e))
             print('Probs', probs)
+            #Filter empty tasks!!!!
+            temp_probs = [(val, i) for i,val in enumerate(probs) if not self.empty_tasks[i]]
+            if len(temp_probs) == 0:
+                break
+            temp_probs = sorted(temp_probs)
+            a_t = temp_probs[-1][1]
             #Take argmax
-            a_t = np.argmax(np.array(probs))
+            #a_t = np.argmax(np.array(probs))
             print('Argmax action:', a_t)
             bandit.upd_action_hist(a_t)
             batch = bandit.sample_task(a_t)
