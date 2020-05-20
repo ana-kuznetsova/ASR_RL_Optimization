@@ -18,6 +18,7 @@ class ContextualBandit:
         self.reward_hist = []
         self.action_hist = []
         self.sc_reward_hist = []
+        self.val_loss = []
         self.theta = np.zeros((self.num_actions, dim))
         
     def save_sc_rhist(self, rhist_path):

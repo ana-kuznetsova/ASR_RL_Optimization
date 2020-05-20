@@ -73,12 +73,14 @@ def train_SPG(mode):
 def train_SWTSK():
     os.system('bash scripts/tt_train_sw_task.sh')
 
-def run_validation():
-    os.system('bash scripts/tt_val.sh')
+def run_validation(dir):
+    command = 'python /N/u/anakuzne/Carbonate/curr_learning/DeepSpeech/evaluate.py -W ignore --test_files=\'/N/slate/anakuzne/tatar/clips/dev.csv\' --test_batch_size 64 --checkpoint_dir=\'/N/slate/anakuzne/tt_ckpt_automated_curr/' + dir +'/\' --alphabet_config_path=\'/N/slate/anakuzne/tatar/tt_alphabet.txt\' --test_output_file=\'/N/u/anakuzne/Carbonate/curr_learning/automated_curr/validation_loss.json\' --lm_binary_path=\'/N/slate/anakuzne/tatar/tt_lm.binary\' --lm_trie_path=\'/N/slate/anakuzne/tatar/tt_trie\' --report_count 4700'
+    os.system(command)
 
 def loadValLoss():
     with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/validation_loss.json') as f:
         loss = json.load(f)
+    loss = sum([l['loss'] for l in loss])/len(loss)        
     return loss
     
 def load_losses(init=False, mode='UCB1'):

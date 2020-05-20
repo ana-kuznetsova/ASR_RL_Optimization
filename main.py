@@ -49,12 +49,16 @@ def main(args):
                 num_timesteps=num_timesteps, 
                 batch_size=args.batch_size, 
                 hist_path=args.hist_path,
+                val_dir=args.val_dir,
                 c=args.c, 
                 gain_type=args.gain_type)
 
     elif args.mode == 'EXP3':
         print('Starting EXP3...')
-        EXP3(data, df, args.num_episodes, num_timesteps, args.batch_size, args.c, args.gain_type)
+        EXP3(data, df, args.num_episodes, num_timesteps, args.batch_size,
+             hist_path = args.hist_path,
+             val_dir = args.val_dir,
+             args.c, args.gain_type)
 
     elif args.mode == 'LinUCB':       
         LinUCB(data, args.num_episodes, num_timesteps, args.batch_size)
@@ -74,5 +78,6 @@ if __name__ == '__main__':
     parser.add_argument('--gain_type', type=str, help='Gain type (Prediction Gain, Self-Prediction Gain)', required=True)
     parser.add_argument('--mode', type=str, help='Algorithms to run', required=True)
     parser.add_argument('--hist_path', type=str, help='Path to save history files', required=True)
+    parser.add_argument('--val_dir', type=str, help='Path validation directory')
     args = parser.parse_args()
     main(args)

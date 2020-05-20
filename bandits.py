@@ -135,7 +135,7 @@ class Bandit:
         '''
         print('Loss array:', losses)
         #Tau 230202 - scale factor, length of the longest input
-        L = (losses[0]- losses[1])/230202
+        L = (losses[0]- losses[1])
         print('L:', L)
         self.loss_hist.append(losses[1])
         
@@ -202,7 +202,7 @@ class Bandit:
             self.W_exp3[i] = self.W_exp3[i]*np.exp(c*feedback[i]/self.num_tasks)
 
 
-def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_type='PG'):
+def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, val_dir, c=0.01, gain_type='PG'):
     bandit = Bandit(tasks = dataset.tasks, batch_size = batch_size)
     for ep in range(1, num_episodes+1):
         bandit.initialise_tasks()
@@ -243,19 +243,17 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
             bandit.update_EXP3_weights(reward = reward, action = action_t, c = c)
             print('Current reward:', reward)
             #Save histories to plot
-            bandit.save_sc_rhist('sc_reward_hist_EXP3.pickle')
-            bandit.save_lhist('loss_hist_EXP3.pickle')
-            bandit.save_action_hist('action_hist_EXP3.pickle')
+            bandit.save_hist(hist_path, mode, gain_type)
             print('-----------------------------------------------')
             print('Current Weights')
             bandit.print_weights()
             print('-----------------------------------------------')
         #Run validation after each epoch finishes
-        run_validation()
+        run_validation(val_dir)
         dev_err = loadValLoss()
         self.val_loss.append(dev_err)
 
-def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c=0.01, gain_type='PG'):
+def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, val_dir, c=0.01, gain_type='PG'):
     '''
     Params:
         dataset (object): of class DataSet
@@ -320,6 +318,6 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c=0.0
             bandit.print_qfunc()
             print('-----------------------------------------------')
         #Run validation after each epoch finishes
-        run_validation()
+        run_validation(val_dir)
         dev_err = loadValLoss()
         self.val_loss.append(dev_err)
