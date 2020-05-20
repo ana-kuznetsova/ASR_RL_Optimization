@@ -24,6 +24,9 @@ class Bandit:
         print(self.W_exp3)
 
     def save_hist(self, hist_path, mode='UCB1', gain_type='PG'):
+        f = open(hist_path + 'val_loss_' + mode + "_" + gain_type + '.pickle', 'wb')
+        pickle.dump(self.val_loss, f)
+        f.close()
         if mode=='UCB1':
             f = open(hist_path + 'loss_ucb1_' + gain_type + '.pickle', 'wb')
             pickle.dump(self.loss_hist, f)
@@ -31,15 +34,14 @@ class Bandit:
             f = open(hist_path + 'actions_ucb1_' + gain_type + '.pickle', 'wb')
             pickle.dump(self.action_hist, f)
             f.close()
-
             #Save cumulative reward
             f = open(hist_path + 'cumulative_r_ucb1_' + gain_type + '.pickle', 'wb')
             pickle.dump(self.sc_reward_hist, f)
             f.close()
-
             #Calculate avg reward
             r =  np.mean(self.reward_hist, axis=0)
             np.save(hist_path + 'avg_r_ucb1_' + gain_type + '.npy', r)
+        
         elif mode=='EXP3':
             f = open(hist_path + 'loss_exp3_' + gain_type + '.pickle', 'wb')
             pickle.dump(self.loss_hist, f)
@@ -47,7 +49,6 @@ class Bandit:
             f = open(hist_path + 'actions_exp3_' + gain_type + '.pickle', 'wb')
             pickle.dump(self.action_hist, f)
             f.close()
-
             #Calculate avg reward
             r =  np.mean(self.reward_hist, axis=0)
             np.save(hist_path + 'avg_r_exp3_' + gain_type + '.npy', r)
@@ -249,6 +250,10 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, c=0.01, gain_typ
             print('Current Weights')
             bandit.print_weights()
             print('-----------------------------------------------')
+        #Run validation after each epoch finishes
+        run_validation()
+        dev_err = loadValLoss()
+        self.val_loss.append(dev_err)
 
 def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c=0.01, gain_type='PG'):
     '''
@@ -316,3 +321,5 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c=0.0
             print('-----------------------------------------------')
         #Run validation after each epoch finishes
         run_validation()
+        dev_err = loadValLoss()
+        self.val_loss.append(dev_err)

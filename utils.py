@@ -76,6 +76,11 @@ def train_SWTSK():
 def run_validation():
     os.system('bash scripts/tt_val.sh')
 
+def loadValLoss():
+    with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/validation_loss.json') as f:
+        loss = json.load(f)
+    return loss
+    
 def load_losses(init=False, mode='UCB1'):
     if mode == 'switch-task':
         with open('N/u/ak16/Carbonate/TT_Data/losses/transfer_losses.pickle'):
