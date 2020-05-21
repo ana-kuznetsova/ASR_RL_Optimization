@@ -64,7 +64,8 @@ def main(args):
         LinUCB(data, args.num_episodes, num_timesteps, args.batch_size, args.hist_path, args.val_dir)
 
     elif args.mode == 'SWTSK':
-        SWTSK(data)
+        s = SWTSK(data)
+        s.train()
 
 
 if __name__ == '__main__':
