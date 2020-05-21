@@ -5,9 +5,9 @@ from bandits import *
 
 
 
-def test(tasks):
+def test(tasks,t):
     mode = sys.argv[1]
-    bandit = Bandit(tasks, 64)
+    bandit = Bandit(tasks, t, 64, 15)
 
     for ep in range(1, 10):
 
@@ -60,6 +60,7 @@ def test(tasks):
 
 if __name__ == "__main__":
     print("Batches initialized with 200 examples with batchsize of 64")
-    tasks = [[i for i in range(200)] for j in range(3)]
-    test(tasks)
+    tstep = 200*10//15
+    tasks = [[i for i in range(200)] for j in range(10)]
+    test(tasks,tstep)
 
