@@ -202,7 +202,7 @@ class Bandit:
             self.W_exp3[i] = self.W_exp3[i]*np.exp(c*feedback[i]/self.num_tasks)
 
 
-def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, val_dir, c, gain_type):
+def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c, gain_type):
     bandit = Bandit(tasks = dataset.tasks, batch_size = batch_size)
     for ep in range(1, num_episodes+1):
         bandit.initialise_tasks()
@@ -249,11 +249,11 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, val_d
             bandit.print_weights()
             print('-----------------------------------------------')
         #Run validation after each epoch finishes
-        run_validation(val_dir)
+        run_validation('EXP3')
         dev_err = loadValLoss()
         self.val_loss.append(dev_err)
 
-def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, val_dir, c=0.01, gain_type='PG'):
+def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c=0.01, gain_type='PG'):
     '''
     Params:
         dataset (object): of class DataSet
@@ -319,6 +319,6 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, val_d
             bandit.print_qfunc()
             print('-----------------------------------------------')
         #Run validation after each epoch finishes
-        run_validation(val_dir)
+        run_validation('UCB1')
         dev_err = loadValLoss()
         self.val_loss.append(dev_err)

@@ -77,8 +77,15 @@ def train_SPG(mode):
 def train_SWTSK():
     os.system('bash scripts/tt_train_sw_task.sh')
 
-def run_validation(dir):
-    command = "python /N/u/anakuzne/Carbonate/curr_learning/DeepSpeech/evaluate.py -W ignore --test_files='/N/slate/anakuzne/tatar/clips/switch-task-train.csv' --test_batch_size 64 --checkpoint_dir='/N/slate/anakuzne/tt_ckpt_automated_curr/" + dir + "/ --alphabet_config_path='/N/slate/anakuzne/tatar/tt_alphabet.txt' --test_output_file='/N/u/anakuzne/Carbonate/curr_learning/automated_curr/validation_loss.json' --lm_binary_path='/N/slate/anakuzne/tatar/tt_lm.binary' --lm_trie_path='/N/slate/anakuzne/tatar/tt_trie' --report_count 4700"
+def run_validation(mode, hist_path):
+    if mode=='UCB1':
+        dir_ = 'main_model'
+    elif mode=='EXP3':
+        dir_ = 'main_model_exp3'
+    elif mode=='LinUCB':
+        dir_ = 'main_model_lin'
+
+    command = "python /N/u/anakuzne/Carbonate/curr_learning/DeepSpeech/evaluate.py -W ignore --test_files='/N/slate/anakuzne/tatar/clips/switch-task-train.csv' --test_batch_size 64 --checkpoint_dir='/N/slate/anakuzne/tt_ckpt_automated_curr/" + dir_ + "/ --alphabet_config_path='/N/slate/anakuzne/tatar/tt_alphabet.txt' --test_output_file='/N/u/anakuzne/Carbonate/curr_learning/automated_curr/validation_loss.json' --lm_binary_path='/N/slate/anakuzne/tatar/tt_lm.binary' --lm_trie_path='/N/slate/anakuzne/tatar/tt_trie' --report_count 4700"
     os.system(command)
 
 def loadValLoss():
