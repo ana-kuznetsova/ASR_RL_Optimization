@@ -87,7 +87,7 @@ def loadValLoss():
     
 def load_losses(init=False, mode='UCB1'):
     if mode == 'switch-task':
-        with open('N/u/ak16/Carbonate/TT_Data/losses/transfer_losses.pickle'):
+        with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/transfer_losses.pickle'):
             loss = pickle.loads(f)
         return loss
     if mode == 'UCB1':
