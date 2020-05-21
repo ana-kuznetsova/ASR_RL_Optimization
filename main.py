@@ -49,7 +49,6 @@ def main(args):
                 num_timesteps=num_timesteps, 
                 batch_size=args.batch_size, 
                 hist_path=args.hist_path,
-                val_dir=args.val_dir,
                 c=args.c, 
                 gain_type=args.gain_type)
 
