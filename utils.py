@@ -85,7 +85,7 @@ def run_validation(mode, hist_path):
     elif mode=='LinUCB':
         dir_ = 'main_model_lin'
 
-    command = "python /N/u/anakuzne/Carbonate/curr_learning/DeepSpeech/evaluate.py -W ignore --test_files='/N/slate/anakuzne/tatar/clips/switch-task-train.csv' --test_batch_size 64 --checkpoint_dir='/N/slate/anakuzne/tt_ckpt_automated_curr/" + dir_ + "/ --alphabet_config_path='/N/slate/anakuzne/tatar/tt_alphabet.txt' --test_output_file='/N/u/anakuzne/Carbonate/curr_learning/automated_curr/validation_loss.json' --lm_binary_path='/N/slate/anakuzne/tatar/tt_lm.binary' --lm_trie_path='/N/slate/anakuzne/tatar/tt_trie' --report_count 4700"
+    command = "python /N/u/anakuzne/Carbonate/curr_learning/DeepSpeech/evaluate.py -W ignore --test_files='/N/slate/anakuzne/tatar/clips/switch-task-train.csv' --test_batch_size 64 --checkpoint_dir='/N/slate/anakuzne/tt_ckpt_automated_curr/" + dir_ + "/ --alphabet_config_path='/N/slate/anakuzne/tatar/tt_alphabet.txt' --test_output_file='/N/u/anakuzne/Carbonate/curr_learning/automated_curr/" + hist_path + "validation_loss.json' --lm_binary_path='/N/slate/anakuzne/tatar/tt_lm.binary' --lm_trie_path='/N/slate/anakuzne/tatar/tt_trie' --report_count 4700"
     os.system(command)
 
 def loadValLoss():

@@ -197,6 +197,6 @@ def LinUCB(dataset, hist_path, num_episodes, num_timesteps, batch_size, gain_typ
             print('Current Q-function')
             print(bandit.get_qvalues())
             print('-----------------------------------------------')
-        run_validation("LinUCB")
+        run_validation("LinUCB", hist_path)
         dev_err = loadValLoss()
         self.val_loss.append(dev_err)

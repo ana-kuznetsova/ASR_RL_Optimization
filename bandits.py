@@ -249,7 +249,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c, ga
             bandit.print_weights()
             print('-----------------------------------------------')
         #Run validation after each epoch finishes
-        run_validation('EXP3')
+        run_validation('EXP3', hist_path)
         dev_err = loadValLoss()
         self.val_loss.append(dev_err)
 
@@ -319,6 +319,6 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c=0.0
             bandit.print_qfunc()
             print('-----------------------------------------------')
         #Run validation after each epoch finishes
-        run_validation('UCB1')
+        run_validation('UCB1', hist_path)
         dev_err = loadValLoss()
         self.val_loss.append(dev_err)
