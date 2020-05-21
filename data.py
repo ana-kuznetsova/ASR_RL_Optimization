@@ -20,5 +20,8 @@ class DataSet:
         
         sorted_df = self.data.sort_values(by=['compression_scores'], ascending=False)['path'].values
         chunk_size = len(sorted_df)//self.num_tasks
-        
         self.tasks = split(sorted_df, chunk_size)
+        if len(sorted_df)%self.num_tasks != 0:
+            temp = [self.task[i] for i in range(len(self.tasks)-1)]
+            temp[-1].extend(self.tasks[-1])
+            self.tasks = temp
