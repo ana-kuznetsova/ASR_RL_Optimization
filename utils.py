@@ -95,7 +95,7 @@ def loadValLoss():
     return loss
     
 def load_losses(init=False, mode='UCB1'):
-    if mode == 'switch-task':
+    if mode == 'SWTSK':
         with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/transfer_losses.pickle'):
             loss = pickle.loads(f)
         return loss
