@@ -202,7 +202,7 @@ class Bandit:
             self.W_exp3[i] = self.W_exp3[i]*np.exp(c*feedback[i]/self.num_tasks)
 
 
-def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, val_dir, c=0.01, gain_type='PG'):
+def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, val_dir, c, gain_type):
     bandit = Bandit(tasks = dataset.tasks, batch_size = batch_size)
     for ep in range(1, num_episodes+1):
         bandit.initialise_tasks()
