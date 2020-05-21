@@ -33,6 +33,7 @@ def clear_dirs(mode):
         delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/10/')
         delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/main_model/')
         delete_files('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/')
+        delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/switch_task/')
     elif mode=='EXP3':
         delete_files('/N/slate/anakuzne/tt_ckpt_automated_curr/main_model_exp3/')
     elif mode=='LinUCB':
