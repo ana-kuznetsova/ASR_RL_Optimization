@@ -56,9 +56,9 @@ def main(args):
     elif args.mode == 'EXP3':
         print('Starting EXP3...')
         EXP3(data, df, args.num_episodes, num_timesteps, args.batch_size,
-             hist_path = args.hist_path,
-             val_dir = args.val_dir,
-             args.c, args.gain_type)
+            args.hist_path,
+            args.val_dir,
+            args.c, args.gain_type)
 
     elif args.mode == 'LinUCB':       
         LinUCB(data, args.num_episodes, num_timesteps, args.batch_size, args.hist_path, args.val_dir)
