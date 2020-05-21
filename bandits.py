@@ -270,8 +270,8 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, val_d
                     batch_size = batch_size, num_episodes = num_episodes)
     ##### Initialization ######
     #Play each of the arms once, observe the reward
-    
     for i in range(len(bandit.tasks)):
+        print(len(bandit.tasks))
         print("task_ind:",i)
         batch = bandit.sample_task(i)
         save_batch(current_batch = batch, batch_filename = 'batch')
