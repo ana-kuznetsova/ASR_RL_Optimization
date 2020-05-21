@@ -15,7 +15,7 @@ For each task:
 """
 
 class SWTSK:
-    def __intit__(self, tasks):
+    def __init__(self, tasks):
         self.tasks = tasks
         self.loss_hist = []
         
