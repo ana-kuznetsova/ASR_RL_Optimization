@@ -56,11 +56,10 @@ def main(args):
         print('Starting EXP3...')
         EXP3(data, df, args.num_episodes, num_timesteps, args.batch_size,
             args.hist_path,
-            args.val_dir,
             args.c, args.gain_type)
 
     elif args.mode == 'LinUCB':       
-        LinUCB(data, args.num_episodes, num_timesteps, args.batch_size, args.hist_path, args.val_dir)
+        LinUCB(data, args.num_episodes, num_timesteps, args.batch_size, args.hist_path)
 
     elif args.mode == 'SWTSK':
         s = SWTSK(data)
