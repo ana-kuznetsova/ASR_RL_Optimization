@@ -241,7 +241,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c, ga
                 save_batch(current_batch = resampled_batch, batch_filename = 'resampled_batch_exp3')
                 train_SPG(mode='EXP3')
             losses = load_losses(mode="EXP3")
-            reward = bandit.calc_reward(losses, mode = 'EXP3')
+            reward = bandit.calc_reward(losses, ep, t)
             bandit.update_EXP3_weights(reward = reward, action = action_t, c = c)
             print('Current reward:', reward)
             #Save histories to plot
