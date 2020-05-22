@@ -203,7 +203,9 @@ class Bandit:
 
 
 def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c, gain_type):
-    bandit = Bandit(tasks = dataset.tasks, batch_size = batch_size)
+    #bandit = Bandit(tasks = dataset.tasks, batch_size = batch_size)
+    bandit = Bandit(tasks = dataset.tasks, num_timesteps = num_timesteps,
+                    batch_size = batch_size, num_episodes = num_episodes)
     for ep in range(1, num_episodes+1):
         bandit.initialise_tasks()
         print('-----------------------------------------------')
