@@ -252,7 +252,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c, ga
             print('-----------------------------------------------')
         #Run validation after each epoch finishes
         run_validation('EXP3', hist_path)
-        dev_err = loadValLoss()
+        dev_err = loadValLoss(hist_path)
         self.val_loss.append(dev_err)
 
 def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c=0.01, gain_type='PG'):
@@ -322,5 +322,5 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c=0.0
             print('-----------------------------------------------')
         #Run validation after each epoch finishes
         run_validation('UCB1', hist_path)
-        dev_err = loadValLoss()
+        dev_err = loadValLoss(hist_path)
         self.val_loss.append(dev_err)
