@@ -245,7 +245,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c, ga
             bandit.update_EXP3_weights(reward = reward, action = action_t, c = c)
             print('Current reward:', reward)
             #Save histories to plot
-            bandit.save_hist(hist_path, mode, gain_type)
+            bandit.save_hist(hist_path, "EXP3", gain_type)
             print('-----------------------------------------------')
             print('Current Weights')
             bandit.print_weights()
