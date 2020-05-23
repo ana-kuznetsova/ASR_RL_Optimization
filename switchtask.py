@@ -35,7 +35,7 @@ class SWTSK:
             loss_so_far = load_losses('SWTSK')
             self.loss_hist.extend(loss_so_far)
             task_q.append(task_q[-1] + 1)
-        np.save(self.loss_hist, 'loss-hist-switch-task.npy')
+        np.save(np.array(self.loss_hist), 'loss-hist-switch-task.npy')
         
 
 '''
