@@ -89,7 +89,7 @@ def run_validation(mode, hist_path):
     os.system(command)
 
 def loadValLoss(hist_path):
-    with open("/N/u/anakuzne/Carbonate/curr_learning/automated_curr/" + hist_path.split()[1] + "/validation_loss.json") as f:
+    with open("/N/u/anakuzne/Carbonate/curr_learning/automated_curr/" + hist_path.split('/')[1] + "/validation_loss.json") as f:
         loss = json.load(f)
     loss = sum([l['loss'] for l in loss])/len(loss)        
     return loss
