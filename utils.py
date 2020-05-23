@@ -84,7 +84,7 @@ def run_validation(mode, hist_path):
         dir_ = 'main_model_exp3'
     elif mode=='LinUCB':
         dir_ = 'main_model_lin'
-    elif == 'SWTSK':
+    elif mode == 'SWTSK':
         dir_ = 'switch_task'
 
     print("Starting valiadtion...")
