@@ -200,4 +200,4 @@ def LinUCB(dataset, hist_path, num_episodes, num_timesteps, batch_size, gain_typ
             print('-----------------------------------------------')
         run_validation("LinUCB", hist_path)
         dev_err = loadValLoss(hist_path)
-        self.val_loss.append(dev_err)
+        bandit.val_loss.append(dev_err)
