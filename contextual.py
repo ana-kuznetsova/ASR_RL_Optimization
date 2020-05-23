@@ -76,10 +76,10 @@ class ContextualBandit:
         '''
         Returns raw reward without rescaling
         '''
-        print('Loss array:', losses)
+        #print('Loss array:', losses)
         L = losses[0]- losses[1]
         self.loss_hist.append(losses[1])
-        print('Loss hist:', self.loss_hist)
+        #print('Loss hist:', self.loss_hist)
         self.reward_hist.append(L)
         #Save reward to the hist of cumulative scaled rewards
         rescaled_reward = self.rescale_reward()
@@ -165,6 +165,7 @@ def LinUCB(dataset, hist_path, num_episodes, num_timesteps, batch_size, gain_typ
                 probs.append(float(e))
             print('Probs', probs)
             #Filter empty tasks!!!!
+            print('EMPTY TASKS:', bandit.empty_tasks)
             temp_probs = [(val, i) for i,val in enumerate(probs) if not bandit.empty_tasks[i]]
             if len(temp_probs) == 0:
                 break
