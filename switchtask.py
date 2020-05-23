@@ -1,5 +1,5 @@
 from data import DataSet
-from utils import clear_dirs, save_batch, load_losses, train_SWTSK, run_validation, loadValloss
+from utils import clear_dirs, save_batch, load_losses, train_SWTSK, run_validation, loadValLoss
 import pandas as pd
 import numpy as np
 import math
@@ -36,7 +36,7 @@ class SWTSK:
             self.loss_hist.extend(loss_so_far)
             task_q.append(task_q[-1] + 1)
             run_validation('UCB1', '../history_9/')
-            val_loss = loadValloss('../history_9/')
+            val_loss = loadValLoss('../history_9/')
         np.save(np.array(self.loss_hist), 'loss-hist-switch-task.npy')
         
 
