@@ -23,10 +23,12 @@ class Bandit:
     def print_weights(self):
         print(self.W_exp3)
 
-    def save_hist(self, hist_path, mode='UCB1', gain_type='PG'):
+    def save_val_loss(self, mode, gain_type, hist_path):
         f = open(hist_path + 'val_loss_' + mode + "_" + gain_type + '.pickle', 'wb')
         pickle.dump(self.val_loss, f)
         f.close()
+
+    def save_hist(self, hist_path, mode='UCB1', gain_type='PG'):
         if mode=='UCB1':
             f = open(hist_path + 'loss_ucb1_' + gain_type + '.pickle', 'wb')
             pickle.dump(self.loss_hist, f)
@@ -52,6 +54,14 @@ class Bandit:
             #Calculate avg reward
             r =  np.mean(self.reward_hist, axis=0)
             np.save(hist_path + 'avg_r_exp3_' + gain_type + '.npy', r)
+
+            f = open(hist_path + 'actions_exp3_' + gain_type + '.pickle', 'wb')
+            pickle.dump(self.action_hist, f)
+            f.close()
+            #Save cumulative reward
+            f = open(hist_path + 'cumulative_r_exp3_' + gain_type + '.pickle', 'wb')
+            pickle.dump(self.sc_reward_hist, f)
+            f.close()
 
 
     def update_qfunc_UCB1(self, reward, action):
@@ -231,6 +241,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c, ga
                 #Break if no task is non empty
                 if action_t == -1:
                     break
+            bandit.action_hist.append(action_t)
             #Train and get the reward for the above action
             batch = bandit.sample_task(action_t)
             save_batch(current_batch = batch, batch_filename = 'batch_exp3')
@@ -254,6 +265,7 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c, ga
         run_validation('EXP3', hist_path)
         dev_err = loadValLoss(hist_path)
         bandit.val_loss.append(dev_err)
+        bandit.save_val_loss('EXP3', gain_type, hist_path)
 
 def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c=0.01, gain_type='PG'):
     '''
@@ -324,3 +336,4 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c=0.0
         run_validation('UCB1', hist_path)
         dev_err = loadValLoss(hist_path)
         bandit.val_loss.append(dev_err)
+        bandit.save_val_loss("UCB1", gain_type, hist_path)
