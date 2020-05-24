@@ -19,10 +19,12 @@ class DataSet:
         self.data['compression_scores'] = 1 - self.data['compression_scores']
         
         sorted_df = self.data.sort_values(by=['compression_scores'], ascending=False)['path'].values
+        
+        #test only.....
+        sorted_df = sorted_df[::100]
+        #............
         chunk_size = len(sorted_df)//self.num_tasks
         self.tasks = split(sorted_df, chunk_size)
-        #Creating test tasks
-        self.tasks = self.tasks[::100]
         
         if len(sorted_df)%self.num_tasks != 0:
             temp = [self.tasks[i] for i in range(len(self.tasks)-1)]
