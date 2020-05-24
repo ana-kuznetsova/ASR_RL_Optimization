@@ -28,6 +28,7 @@ class ContextualBandit:
         f.close()
         
     def save_hist(self, hist_path, gain_type='PG'):
+        hist_path = '/N/u/anakuzne/Carbonate/curr_learning/' + hist_path.split('/')[1]+'/'
         f = open(hist_path + 'loss_lin_' + gain_type + '.pickle', 'wb')
         pickle.dump(self.loss_hist, f)
         f.close()
@@ -53,22 +54,17 @@ class ContextualBandit:
     def get_qvalues(self):
         return self._qfunc
         
-    def sample_task(self, task_ind, replace=True):
-        if replace:
-            if len(self.stored_tasks[task_ind]) == 0:
-                return self.stored_tasks[task_ind]
-            if len(self.stored_tasks[task_ind]) < self.batch_size:
-                batch = self.stored_tasks[task_ind]
-                self.stored_tasks[task_ind] = np.array([])
-                self.empty_tasks[task_ind] = True
-                return batch
-            if len(self.stored_tasks[task_ind]) >= self.batch_size:
-                batch = np.random.choice(self.stored_tasks[task_ind], self.batch_size, replace = False)
-                self.stored_tasks[task_ind] = np.array([row for row in self.stored_tasks[task_ind] if row not in batch])
-                return batch
-        else:
-            ## Use for feedback simulation
-            batch = np.random.choice(self.stored_tasks[task_ind], self.batch_size, replace = True)
+    def sample_task(self, task_ind):
+        if len(self.stored_tasks[task_ind]) == 0:
+            return self.stored_tasks[task_ind]
+        if len(self.stored_tasks[task_ind]) < self.batch_size:
+            batch = self.stored_tasks[task_ind]
+            self.stored_tasks[task_ind] = np.array([])
+            self.empty_tasks[task_ind] = True
+            return batch
+        if len(self.stored_tasks[task_ind]) >= self.batch_size:
+            batch = np.random.choice(self.stored_tasks[task_ind], self.batch_size, replace = False)
+            self.stored_tasks[task_ind] = np.array([row for row in self.stored_tasks[task_ind] if row not in batch])
             return batch
         
     def rescale_reward(self):
