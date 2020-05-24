@@ -21,6 +21,11 @@ class ContextualBandit:
         self.val_loss = []
         self.empty_tasks = [False for i in range(len(self.tasks))]
         self.theta = np.zeros((self.num_actions, dim))
+
+    def save_val_loss(self, mode, gain_type, hist_path):
+        f = open(hist_path + 'val_loss_' + mode + "_" + gain_type + '.pickle', 'wb')
+        pickle.dump(self.val_loss, f)
+        f.close()
         
     def save_hist(self, hist_path, gain_type='PG'):
         f = open(hist_path + 'loss_lin_' + gain_type + '.pickle', 'wb')
@@ -201,3 +206,4 @@ def LinUCB(dataset, hist_path, num_episodes, num_timesteps, batch_size, gain_typ
         run_validation("LinUCB", hist_path)
         dev_err = loadValLoss(hist_path)
         bandit.val_loss.append(dev_err)
+        bandit.save_val_loss("LinUCB",gain_type,hist_path)
