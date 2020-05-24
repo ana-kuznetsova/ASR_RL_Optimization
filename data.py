@@ -25,3 +25,7 @@ class DataSet:
             temp = [self.tasks[i] for i in range(len(self.tasks)-1)]
             np.append(temp[-1], self.tasks[-1])
             self.tasks = temp
+        
+        #Creating test tasks
+        test_task = self.tasks[::100]
+        self.tasks = test_task
