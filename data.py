@@ -21,11 +21,12 @@ class DataSet:
         sorted_df = self.data.sort_values(by=['compression_scores'], ascending=False)['path'].values
         chunk_size = len(sorted_df)//self.num_tasks
         self.tasks = split(sorted_df, chunk_size)
+        #Creating test tasks
+        self.tasks = self.tasks[::100]
+        
         if len(sorted_df)%self.num_tasks != 0:
             temp = [self.tasks[i] for i in range(len(self.tasks)-1)]
             np.append(temp[-1], self.tasks[-1])
             self.tasks = temp
         
-        #Creating test tasks
-        test_task = self.tasks[::100]
-        self.tasks = test_task
+        
