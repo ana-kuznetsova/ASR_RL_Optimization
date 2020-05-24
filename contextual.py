@@ -53,7 +53,7 @@ class ContextualBandit:
     def get_qvalues(self):
         return self._qfunc
         
-    def sample_task(self, task_ind, replace=False):
+    def sample_task(self, task_ind, replace=True):
         if replace:
             if len(self.stored_tasks[task_ind]) == 0:
                 return self.stored_tasks[task_ind]
