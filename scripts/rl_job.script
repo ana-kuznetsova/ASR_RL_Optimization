@@ -1,0 +1,26 @@
+#!/bin/bash
+
+#SBATCH -p dl
+#SBATCH --gres=gpu:p100:1
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=12
+#SBATCH --time=2-00:00:00
+#SBATCH -o rl_ucb_exp3_pg_5_15ep_%j.out
+#SBATCH -e rl_ucb_exp3_pg_5_15ep_err_%j.err
+#SBATCH --mail-user=anakuzne@iu.edu
+#SBATCH --mail-type=ALL
+#SBATCH -J rl_ucb_exp3
+
+source $HOME/tmp/deepspeech-transfer/bin/activate
+cd /N/u/anakuzne/Carbonate/curr_learning/ASR_RL_Optimization
+git checkout switch-task-curriculum
+
+
+echo "RUNNING UCB1 15 EPOCHS"
+echo "----------------------------"
+python main.py --df_path='tt_train_with_scores.csv' --num_tasks=5 --csv='train.csv' --num_episodes=15 --batch_size=64 --gain_type='PG' --c 0.5 --hist_path="../history_13/" --mode="UCB1"
+
+echo "RUNNING EXP3 15 EPOCHS"
+echo "---------------------------"
+
+python main.py --mode='EXP3' --df_path='tt_train_with_scores.csv' --num_tasks=5 --csv='train.csv' --num_episodes=15 --batch_size=64 --gain_type='PG' --c 0.01 --hist_path='../history_14/'
