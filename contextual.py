@@ -26,6 +26,10 @@ class ContextualBandit:
         f = open(hist_path + 'val_loss_' + mode + "_" + gain_type + '.pickle', 'wb')
         pickle.dump(self.val_loss, f)
         f.close()
+
+    def initialise_tasks(self):
+        self.stored_tasks = [[i for i in row] for row in self.tasks]
+        self.empty_tasks = [False for task in self.tasks]
         
     def save_hist(self, hist_path, gain_type='PG'):
         hist_path = '/N/u/anakuzne/Carbonate/curr_learning/' + hist_path.split('/')[1]+'/'
@@ -143,6 +147,7 @@ def LinUCB(dataset, hist_path, num_episodes, num_timesteps, batch_size, gain_typ
         print('-----------------------------------')
         print(f'LinUCB: Starting episode {ep+1}...')
         print('-----------------------------------')
+        bandit.initialise_tasks()
         seen = []
         for t in range(num_timesteps):
             print(f'Timestep {t}')
