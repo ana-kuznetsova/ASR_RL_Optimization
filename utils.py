@@ -96,14 +96,14 @@ def run_validation(mode, hist_path):
 
 def loadValLoss(hist_path):
     with open("/N/u/anakuzne/Carbonate/curr_learning/" + hist_path.split('/')[1] + "/validation_loss.json") as f:
-        loss = json.loads(f)
+        loss = json.load(f)
     loss = sum([l['loss'] for l in loss])/len(loss)        
     return loss
     
 def load_losses(init=False, mode='UCB1'):
     if mode == 'SWTSK':
         with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/transfer_losses.pickle'):
-            loss = pickle.loads(f)
+            loss = pickle.load(f)
         return loss
     if mode == 'UCB1':
         if init:
@@ -112,15 +112,15 @@ def load_losses(init=False, mode='UCB1'):
             L1 = 1000
         else: 
             with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_before.json') as f:
-                loss_before = json.loads(f)
+                loss_before = json.load(f)
             L1 = sum([l['loss'] for l in loss_before])/len(loss_before)        
         with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_after.json') as f:
-            loss_after = json.loads(f)
+            loss_after = json.load(f)
         L2 = sum([l['loss'] for l in loss_after])/len(loss_after)
     elif mode=='EXP3':
         try:#Why?
             with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_before_exp3.json') as f:
-                loss_before = json.loads(f)
+                loss_before = json.load(f)
             L1 = sum([l['loss'] for l in loss_before])/len(loss_before)
         except FileNotFoundError:
             L1 = 800
@@ -130,9 +130,9 @@ def load_losses(init=False, mode='UCB1'):
 
     elif mode=='LinUCB':
         with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_before_lin.json') as f:
-            loss_before = json.loads(f)
+            loss_before = json.load(f)
         L1 = sum([l['loss'] for l in loss_before])/len(loss_before)
         with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_after_lin.json') as f:
-            loss_after = json.loads(f)
+            loss_after = json.load(f)
         L2 = sum([l['loss'] for l in loss_after])/len(loss_after)
     return [L1, L2]             
