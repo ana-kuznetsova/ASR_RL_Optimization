@@ -18,6 +18,7 @@ class SWTSK:
     def __init__(self, data):
         self.tasks = data.tasks
         self.loss_hist = []
+        self.val_loss_hist = []
         
     def create_task(self, task_q):
         curr_data = []
@@ -37,7 +38,9 @@ class SWTSK:
             task_q.append(task_q[-1] + 1)
             run_validation('SWTSK', '../history_9/')
             val_loss = loadValLoss('../history_9/')
-        np.save('loss-hist-switch-task.npy', np.array(self.loss_hist))
+            self.val_loss_hist.append(val_loss)
+
+        np.save('val-loss-hist-switch-task.npy', np.array(self.val_loss_hist))
         
 
 '''
