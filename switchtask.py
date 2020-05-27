@@ -36,8 +36,8 @@ class SWTSK:
             loss_so_far = load_losses('SWTSK')
             self.loss_hist.extend(loss_so_far)
             task_q.append(task_q[-1] + 1)
-            run_validation('SWTSK', '../history_9/')
-            val_loss = loadValLoss('../history_9/')
+            run_validation('SWTSK', '../history_19/')
+            val_loss = loadValLoss('../history_19/')
             self.val_loss_hist.append(val_loss)
 
         np.save('val-loss-hist-switch-task.npy', np.array(self.val_loss_hist))
