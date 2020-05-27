@@ -125,7 +125,7 @@ def load_losses(init=False, mode='UCB1'):
         except FileNotFoundError:
             L1 = 800
         with open('/N/u/anakuzne/Carbonate/curr_learning/automated_curr/loss_after_exp3.json') as f:
-            loss_after = json.loads(f)
+            loss_after = json.load(f)
         L2 = sum([l['loss'] for l in loss_after])/len(loss_after)
 
     elif mode=='LinUCB':
