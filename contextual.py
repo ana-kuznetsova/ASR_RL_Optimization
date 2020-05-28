@@ -137,7 +137,7 @@ class ContextualBandit:
                 pad = np.array(self.action_gains[a])
                 pad_len = self.dim - pad.shape[0]
                 x_t = np.pad(pad, (pad_len, 0), mode='maximum').reshape(1, -1)                
-            x_t = self.normalize(x_t)
+            #x_t = self.normalize(x_t)
             D_a = np.concatenate([D_a, x_t], axis=0)
         return D_a[1: ,  :]        
     
