@@ -4,7 +4,7 @@ import pickle
 from utils import *
 
 class ContextualBandit:
-    def __init__(self, tasks, batch_size, dim):
+    def __init__(self, tasks, batch_size, dim, num_episodes, num_timesteps):
         self.tasks = tasks
         self.stored_tasks = [i for i in self.tasks]
         self.num_actions = len(tasks)
@@ -154,7 +154,8 @@ class ContextualBandit:
 
 def LinUCB(dataset, hist_path, num_episodes, num_timesteps, batch_size, gain_type='PG'):
     alpha = 0.05    
-    bandit = ContextualBandit(tasks=dataset.tasks, batch_size=64, dim=5)  
+    bandit = ContextualBandit(tasks=dataset.tasks, batch_size=64, dim=5, num_episodes=num_episodes,
+            num_timesteps=num_timesteps)  
     for ep in range(num_episodes):
         print('-----------------------------------')
         print(f'LinUCB: Starting episode {ep+1}...')
