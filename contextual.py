@@ -15,7 +15,7 @@ class ContextualBandit:
         self._qfunc = {'A':{str(a):np.empty((self.dim, self.dim)) for a in range(self.num_actions)}, 
                        'b':{str(b):np.empty((self.dim, 1)) for b in range(self.num_actions)}}
         self.loss_hist = []
-        self.reward_hist = []
+        self.reward_hist = np.zeros((num_episodes+1, num_timesteps+1))
         self.action_hist = []
         self.sc_reward_hist = []
         self.val_loss = []
@@ -71,29 +71,48 @@ class ContextualBandit:
             self.stored_tasks[task_ind] = np.array([row for row in self.stored_tasks[task_ind] if row not in batch])
             return batch
         
-    def rescale_reward(self):
-        temp = self.reward_hist
-        norm_temp = self.normalize(temp)
-        return norm_temp[-1]
-        
     
-    def calc_reward(self, losses):
+    def calc_reward(self, losses, episode, time_step):
         '''
-        Returns raw reward without rescaling
+        Rescales reward
+        Stores unscaled reward in reward_hist
+        Saves loss hist to loss_hist
         '''
-        #print('Loss array:', losses)
-        L = losses[0]- losses[1]
+        print('Loss array:', losses)
+        #Tau 230202 - scale factor, length of the longest input
+        L = (losses[0]- losses[1])
+        print('L:', L)
         self.loss_hist.append(losses[1])
-        #print('Loss hist:', self.loss_hist)
-        self.reward_hist.append(L)
-        #Save reward to the hist of cumulative scaled rewards
-        rescaled_reward = self.rescale_reward()
-        self.set_cumulative_r(rescaled_reward)
-        return rescaled_reward
-    
-    
+        
+        ##Scale reward
+        ## Take quantiles for N epoch starting from 0
+        print('ep:', episode, 'ts:', time_step)
+        rhist_sofar = np.concatenate([np.ravel(self.reward_hist[:episode]), 
+                                     self.reward_hist[episode, :time_step]], axis=0)
 
-    def set_cumulative_r(self, scaled_r):
+        q_lo = np.ceil(np.quantile(rhist_sofar, 0.2))
+        print('Q Low:', q_lo)
+        q_hi = np.ceil(np.quantile(rhist_sofar, 0.8))
+        print('Q High:', q_hi)
+        if L < q_lo:
+            #if mode == 'UCB1':
+            r = -1
+            #if mode == 'EXP3':
+                #r = 0
+        elif L > q_hi:
+            r = 1
+        else:
+            if ((q_hi-q_lo)-1) == 0:
+                r = 0
+            else:
+                r = (2*(L-q_lo))/((q_hi-q_lo)-1)
+    
+        #Add to reward history
+        self.reward_hist[episode][time_step] = r
+        self.set_cummulative_r(r)
+        return r
+
+    def set_cummulative_r(self, scaled_r):
         '''
         Store cumulative scaled reward per time step
         '''
@@ -102,13 +121,6 @@ class ContextualBandit:
             last_r = self.sc_reward_hist[-1]        
         self.sc_reward_hist.append(scaled_r + last_r)
 
-
-    
-    def normalize(self, v):
-        norm = np.linalg.norm(v)
-        if norm == 0:
-            return v
-        return v/norm
             
     def get_features(self):
         '''
@@ -186,7 +198,7 @@ def LinUCB(dataset, hist_path, num_episodes, num_timesteps, batch_size, gain_typ
             train_PG(mode='LinUCB')
             losses = load_losses('LinUCB')
             #losses = [700, 332]
-            r = bandit.calc_reward(losses)
+            r = bandit.calc_reward(losses, ep, t)
             print('reward:',r)
             bandit.update_action_gain(a_t, r)
             x_t = D_a[a_t]
