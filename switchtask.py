@@ -29,15 +29,15 @@ class SWTSK:
 
     def train(self):
         num_tasks = len(self.tasks)
-        task_q = [0]
-        for task in range(1, num_tasks):
+        task_q = []
+        for task in range(num_tasks):
+            task_q.append(task)
             self.create_task(task_q)
             train_SWTSK()
             loss_so_far = load_losses('SWTSK')
             self.loss_hist.extend(loss_so_far)
-            task_q.append(task_q[-1] + 1)
-            run_validation('SWTSK', '../history_19/')
-            val_loss = loadValLoss('../history_19/')
+            run_validation('SWTSK', '../history_23/')
+            val_loss = loadValLoss('../history_23/')
             self.val_loss_hist.append(val_loss)
 
         np.save('val-loss-hist-switch-task.npy', np.array(self.val_loss_hist))
