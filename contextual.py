@@ -90,6 +90,8 @@ class ContextualBandit:
         rhist_sofar = np.concatenate([np.ravel(self.reward_hist[:episode]), 
                                      self.reward_hist[episode, :time_step]], axis=0)
         print('RHIST:', rhist_sofar)
+        if len(rhist_sofar) == 0:
+            np.append(rhist_sofar, 0)
         q_lo = np.ceil(np.quantile(rhist_sofar, 0.2))
         print('Q Low:', q_lo)
         q_hi = np.ceil(np.quantile(rhist_sofar, 0.8))
