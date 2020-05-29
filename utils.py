@@ -73,6 +73,8 @@ def train_SPG(mode):
         os.system('bash scripts/tt_train_spg.sh')
     elif mode=='EXP3':
         os.system('bash scripts/tt_train_spg_exp3.sh') 
+    elif mode=='LinUCB':
+        os.system('bash scripts/tt_train_spg_lin.sh')
 
 def train_SWTSK():
     os.system('bash scripts/tt_train_sw_task.sh')

@@ -70,7 +70,16 @@ class ContextualBandit:
             batch = np.random.choice(self.stored_tasks[task_ind], self.batch_size, replace = False)
             self.stored_tasks[task_ind] = np.array([row for row in self.stored_tasks[task_ind] if row not in batch])
             return batch
-        
+
+    def resample_task(self, batch, task_ind):
+        '''
+        This function resamples from the passed task_iD. It also makes sure that the resampled
+        batch contains rows that are not already sampled for the current batch.
+        '''
+        resampled_batch =  np.random.choice(self.tasks[task_ind], self.batch_size*2, replace = False)
+        resampled_batch = [row for row in resampled_batch if row not in batch]
+        resampled_batch = np.random.choice(resampled_batch, self.batch_size, replace = False)
+        return resampled_batch 
     
     def calc_reward(self, losses, episode, time_step):
         '''
@@ -199,6 +208,12 @@ def LinUCB(dataset, hist_path, num_episodes, num_timesteps, batch_size, gain_typ
             batch = bandit.sample_task(a_t)
             save_batch(batch, 'batch_lin')
             train_PG(mode='LinUCB')
+            if gain_type == 'PG':
+                train_PG(mode='LinUCB')
+            if gain_type == 'SPG':
+                resampled_batch = bandit.resample_task(batch, a_t)
+                save_batch(current_batch = resampled_batch, batch_filename = 'resampled_batch_lin')
+                train_SPG(mode='LinUCB')
             losses = load_losses('LinUCB')
             #losses = [700, 332]
             r = bandit.calc_reward(losses, ep, t)
