@@ -36,11 +36,11 @@ class SWTSK:
             train_SWTSK()
             loss_so_far = load_losses('SWTSK')
             self.loss_hist.extend(loss_so_far)
-            run_validation('SWTSK', '../history_23/')
-            val_loss = loadValLoss('../history_23/')
-            self.val_loss_hist.append(val_loss)
+            #run_validation('SWTSK', '../history_23/')
+            #val_loss = loadValLoss('../history_23/')
+            #self.val_loss_hist.append(val_loss)
 
-        np.save('val-loss-hist-switch-task.npy', np.array(self.val_loss_hist))
+        #np.save('val-loss-hist-switch-task.npy', np.array(self.val_loss_hist))
         
 
 '''
