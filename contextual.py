@@ -116,7 +116,7 @@ class ContextualBandit:
             if ((q_hi-q_lo)-1) == 0:
                 r = 0
             else:
-                r = (2*(L-q_lo))/((q_hi-q_lo)-1)
+                r = (2*(L-q_lo)/(q_hi-q_lo)) - 1
     
         #Add to reward history
         self.reward_hist[episode][time_step] = r
