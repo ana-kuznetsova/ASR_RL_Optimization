@@ -31,7 +31,7 @@ Args:
 def main(args):
 
     #Clean up checkpoint dirs
-    clear_dirs(args.mode)
+    clear_dirs(args.mode, args.model_path)
 
     df = pd.read_csv(args.df_path)
 
@@ -77,5 +77,7 @@ if __name__ == '__main__':
     parser.add_argument('--gain_type', type=str, help='Gain type (Prediction Gain, Self-Prediction Gain)', required=True)
     parser.add_argument('--mode', type=str, help='Algorithms to run', required=True)
     parser.add_argument('--hist_path', type=str, help='Path to save history files', required=True)
+    parser.add_argument('--model_path', type=str, help='Path to save models ', required=True)
+    
     args = parser.parse_args()
     main(args)

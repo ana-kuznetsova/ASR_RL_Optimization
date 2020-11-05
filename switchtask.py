@@ -33,14 +33,18 @@ class SWTSK:
         for task in range(num_tasks):
             task_q.append(task)
             self.create_task(task_q)
-            train_SWTSK()
-            loss_so_far = load_losses('SWTSK')
-            self.loss_hist.extend(loss_so_far)
-            #run_validation('SWTSK', '../history_23/')
-            #val_loss = loadValLoss('../history_23/')
-            #self.val_loss_hist.append(val_loss)
+            loss_variance = 9999
+            while(loss_variance > 0.025):
+                train_SWTSK()
+                loss_so_far = load_losses('SWTSK')
+                self.loss_hist.extend(loss_so_far)
+                loss_to_check = self.loss_hist[-30:]
+                loss_variance = np.var(loss_to_check)
+            run_validation('SWTSK', '../history_23/')
+            val_loss = loadValLoss('../history_23/')
+            self.val_loss_hist.append(val_loss)
 
-        #np.save('val-loss-hist-switch-task.npy', np.array(self.val_loss_hist))
+        np.save('val-loss-hist-switch-task.npy', np.array(self.val_loss_hist))
         
 
 '''

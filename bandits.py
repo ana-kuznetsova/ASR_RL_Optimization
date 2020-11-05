@@ -244,12 +244,16 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c, ga
             bandit.action_hist.append(action_t)
             #Train and get the reward for the above action
             batch = bandit.sample_task(action_t)
-            save_batch(current_batch = batch, batch_filename = 'batch_exp3')
+            save_batch(current_batch = batch, 
+                       batch_filename = 'batch_exp3', 
+                       path='/N/slate/ak16/Basque/cv-corpus-5.1-2020-06-22/eu/')
             if gain_type == 'PG':
                 train_PG(mode='EXP3')
             if gain_type == 'SPG':
                 resampled_batch = bandit.resample_task(batch, action_t)
-                save_batch(current_batch = resampled_batch, batch_filename = 'resampled_batch_exp3')
+                save_batch(current_batch = resampled_batch, 
+                           batch_filename = 'resampled_batch_exp3',
+                           path='/N/slate/ak16/Basque/cv-corpus-5.1-2020-06-22/eu/')
                 train_SPG(mode='EXP3')
             losses = load_losses(mode="EXP3")
             reward = bandit.calc_reward(losses, ep, t)
@@ -288,7 +292,9 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c=0.0
         print(len(bandit.tasks))
         print("task_ind:",i)
         batch = bandit.sample_task(i)
-        save_batch(current_batch = batch, batch_filename = 'batch')
+        save_batch(current_batch = batch, 
+                   batch_filename = 'batch',
+                   path='/N/slate/ak16/Basque/cv-corpus-5.1-2020-06-22/eu/')
         create_model(i+1)
         losses = load_losses(init=True)        
         reward = bandit.calc_reward(losses, 0, i+1)        
@@ -314,12 +320,16 @@ def UCB1(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c=0.0
             if action_t==-1:
                 break
             batch = bandit.sample_task(action_t)
-            save_batch(current_batch = batch, batch_filename = 'batch')
+            save_batch(current_batch = batch, 
+                       batch_filename = 'batch',
+                       path='/N/slate/ak16/Basque/cv-corpus-5.1-2020-06-22/eu/')
             if gain_type == 'PG':
                 train_PG(mode='UCB1')
             if gain_type == 'SPG':
                 resampled_batch = bandit.resample_task(batch, action_t)
-                save_batch(current_batch = resampled_batch, batch_filename = 'resampled_batch')
+                save_batch(current_batch = resampled_batch, 
+                           batch_filename = 'resampled_batch',
+                           path='/N/slate/ak16/Basque/cv-corpus-5.1-2020-06-22/eu/')
                 train_SPG(mode='UCB1')
             losses = load_losses(mode='UCB1')
             reward = bandit.calc_reward(losses, ep, t)
