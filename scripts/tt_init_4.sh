@@ -4,4 +4,4 @@ python /N/u/ak16/Carbonate/DeepSpeech/DeepSpeech.py -W ignore --train_files='/N/
 
 echo "Init 4, calculate loss after training..."
 
-python /N/u/anakuzne/Carbonate/curr_learning/DeepSpeech/evaluate.py -W ignore --test_files='/N/slate/ak16/Basque/cv-corpus-5.1-2020-06-22/eu/clips/batch.csv' --test_batch_size 32 --checkpoint_dir='/N/slate/ak16/eu_ckpt_automated_curr/4/' --alphabet_config_path='/N/slate/ak16/Basque/cv-corpus-5.1-2020-06-22/eu/eu_alphabet.txt' --test_output_file='/N/u/ak16/Carbonate/curr_learning/automated_curr/loss_after.json' --report_count 4700
+python /N/u/ak16/Carbonate/DeepSpeech/evaluate.py -W ignore --test_files='/N/slate/ak16/Basque/cv-corpus-5.1-2020-06-22/eu/clips/batch.csv' --test_batch_size 32 --checkpoint_dir='/N/slate/ak16/eu_ckpt_automated_curr/4/' --alphabet_config_path='/N/slate/ak16/Basque/cv-corpus-5.1-2020-06-22/eu/eu_alphabet.txt' --test_output_file='/N/u/ak16/Carbonate/curr_learning/automated_curr/loss_after.json' --report_count 4700
