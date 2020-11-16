@@ -48,7 +48,7 @@ def save_batch(current_batch, batch_filename, path):
         df (data set): original training csv
         path (str): path to save df
     '''
-    df = pd.read_csv('train.csv')
+    df = pd.read_csv(path+'/train.csv')
     s = [v.replace('.mp3', '.wav') for v in current_batch]
     df = df[df['wav_filename'].isin(s)]
     df.to_csv(path+batch_filename+'.csv')
