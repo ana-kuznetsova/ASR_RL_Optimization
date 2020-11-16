@@ -246,14 +246,14 @@ def EXP3(dataset, csv, num_episodes, num_timesteps, batch_size, hist_path, c, ga
             batch = bandit.sample_task(action_t)
             save_batch(current_batch = batch, 
                        batch_filename = 'batch_exp3', 
-                       path='/N/slate/ak16/Basque/cv-corpus-5.1-2020-06-22/eu/')
+                       path='/N/slate/ak16/Basque/cv-corpus-5.1-2020-06-22/eu/clips/')
             if gain_type == 'PG':
                 train_PG(mode='EXP3')
             if gain_type == 'SPG':
                 resampled_batch = bandit.resample_task(batch, action_t)
                 save_batch(current_batch = resampled_batch, 
                            batch_filename = 'resampled_batch_exp3',
-                           path='/N/slate/ak16/Basque/cv-corpus-5.1-2020-06-22/eu/')
+                           path='/N/slate/ak16/Basque/cv-corpus-5.1-2020-06-22/eu/clips')
                 train_SPG(mode='EXP3')
             losses = load_losses(mode="EXP3")
             reward = bandit.calc_reward(losses, ep, t)
