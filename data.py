@@ -18,7 +18,7 @@ class DataSet:
 
         self.data['compression_scores'] = 1 - self.data['compression_scores']
         
-        sorted_df = self.data.sort_values(by=['compression_scores'], ascending=False)['path'].values
+        sorted_df = self.data.sort_values(by=['compression_scores'], ascending=False)['wav_filename'].values
         
         #test only.....
         #sorted_df = sorted_df[::100]
